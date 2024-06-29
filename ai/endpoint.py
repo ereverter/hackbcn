@@ -4,6 +4,9 @@ from typing import Any, Dict
 
 import requests
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from .get_transcript import (
     aggregate_emotions,
@@ -25,10 +28,14 @@ def save_file(file: UploadFile, destination: str):
 
 @app.post("/process_video")
 async def process_video(file: UploadFile = File(...)):
-    video_path = save_file(file, f"uploads/{file.filename}")
-    audio_path = f"uploads/{os.path.splitext(file.filename)[0]}.wav"
+    temp_dir = "temp"
+    os.makedirs(temp_dir, exist_ok=True)
+
+    video_path = os.path.join(temp_dir, file.filename)
+    audio_path = os.path.join(temp_dir, f"{os.path.splitext(file.filename)[0]}.wav")
 
     try:
+        save_file(file, video_path)
         extract_audio(video_path, audio_path)
         return {"audio_path": audio_path}
     except Exception as e:
@@ -46,8 +53,9 @@ async def process_audio(file: UploadFile = File(...)):
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
 
 
-@app.get("/fetch_predictions/{job_id}")
+@app.get("/fetch_predictions/{job_id}/{agg_time}")
 async def fetch_predictions(job_id: str, agg_time: float):
+    print(os.getenv("HUMEAI_APIKEY"))
     try:
         response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
         api_response = parse_response(response_json)
