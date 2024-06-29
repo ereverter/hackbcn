@@ -1,9 +1,7 @@
 import "dotenv/config";
 import express, { Router } from "express";
-import multer from "multer";
-import { router } from "./router";
+import { router } from "./router.js";
 
-const upload = multer({ dest: "./public/uploads/video" });
 const PORT = process.env.PORT;
 const app = express();
 app.use(express.urlencoded({ extended: true }));
