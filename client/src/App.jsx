@@ -1,7 +1,6 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useState, useEffect } from "react";
 import "./App.css";
+import dataExample from "./exampleJsonData/response.json";
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -24,7 +23,9 @@ ChartJS.register(
 
 function App() {
   const [file, setFile] = useState();
+  const [dataFetch, setDatafetch] = useState();
   const [uploaded, setUploaded] = useState(false);
+  console.log(dataFetch);
   const data = {
     labels: ["Thing 1", "Thing 2", "Thing 3", "Thing 4", "Thing 5", "Thing 6"],
     datasets: [
@@ -37,6 +38,61 @@ function App() {
       },
     ],
   };
+
+  const processEmotionSums = (grouped_transcription) => {
+    const emotionSums = {};
+
+    grouped_transcription.forEach(([time, text, emotions]) => {
+      for (const [emotion, value] of Object.entries(emotions)) {
+        if (!emotionSums[emotion]) {
+          emotionSums[emotion] = 0;
+        }
+        emotionSums[emotion] += value;
+      }
+    });
+
+    setEmotionSums(emotionSums);
+    setData({
+      labels: Object.keys(emotionSums),
+      datasets: [
+        {
+          label: "Sum of Emotions",
+          data: Object.values(emotionSums),
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 1,
+        },
+      ],
+    });
+  };
+  // useEffect(() => {
+  //   const emotionSums = {};
+
+  //   dataExample.grouped_transcription.forEach(([time, text, emotions]) => {
+  //     for (const [emotion, value] of Object.entries(emotions)) {
+  //       if (!emotionSums[emotion]) {
+  //         emotionSums[emotion] = 0;
+  //       }
+  //       emotionSums[emotion] += value;
+  //     }
+  //     console.log(emotionSums)
+  //   });
+
+  //   console.log('Suma de las emociones:', emotionSums);
+  // }, [dataExample]);
+  // const data = {
+  //   labels: ['Admiration', 'Anxiety', 'Boredom', 'Calmness', 'Confusion', 'Disappointment', 'Doubt', 'Excitement', 'Interest', 'Joy'],
+
+  //   datasets: [
+  //     {
+  //       label: '# of Votes',
+  //       data: [2, 9, 3, 5, 2, 3],
+  //       backgroundColor: 'rgba(255, 99, 132, 0.2)',
+  //       borderColor: 'rgba(255, 99, 132, 1)',
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
   const handleChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -50,7 +106,10 @@ function App() {
       method: "POST",
       body: formData,
     })
-      .then((result) => console.log(result))
+      .then(async (result) => {
+        const data = await result.json();
+        setDatafetch(data.data);
+      })
       .finally(() => {
         setUploaded(true);
       });
@@ -70,12 +129,12 @@ function App() {
         </div>
       </header>
       <main className="container bg-slate-50">
-        <div className="text-center my-8">
+        <div className="text-center my-8 p-10">
           <h1 className="text-4xl font-bold text-gray-900">NervousFree</h1>
           <h2 className="text-2xl font-light text-gray-600 mt-4">
             You can get all you want
           </h2>
-          <section className="m-20">
+          <section className="m-20 ">
             {!uploaded && (
               <form
                 // action="http://localhost:4000/api/uploadVideo"
@@ -101,13 +160,13 @@ function App() {
             )}
             {uploaded && (
               <div>
-                <div className="flex">
+                <div className="flex justify-center">
                   <article className="max-w-sm m-3.5">
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                       <span className="text-blue-400">Your</span> video
                       transcript
                     </h5>
-                    <p className="font-normal py-3 text-gray-700 dark:text-gray-400">
+                    <p className="font-normal py-3 text-gray-700 dark:text-gray-400 text-left">
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       At qui nemo consequatur totam provident voluptatem soluta
                       labore deleniti dolor pariatur eaque maiores dolorem,
@@ -142,7 +201,7 @@ function App() {
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                       <span className="text-red-500">LLM trancript</span>
                     </h5>
-                    <p className="font-normal py-3 text-gray-700 dark:text-gray-400">
+                    <p className="font-normal py-3 text-gray-700 dark:text-gray-400 text-left">
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Porro, ullam, iure temporibus deleniti et sit iste quas
                       soluta cum eligendi molestiae facere officia sunt

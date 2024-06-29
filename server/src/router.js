@@ -43,7 +43,9 @@ router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
       `http://localhost:8000/fetch_predictions/${job_id}/${agg_time}`
     );
     const dataTansf = await responsePredict.json();
-    console.log(dataTansf);
+    console.log(dataTansf.grouped_transcription);
+    const response = dataTansf.grouped_transcription;
+    res.send({ data: response });
   } catch (err) {
     console.log(err);
   }
