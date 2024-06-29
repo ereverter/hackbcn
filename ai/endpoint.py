@@ -4,14 +4,15 @@ from typing import Any, Dict
 
 import requests
 from fastapi import FastAPI, File, HTTPException, UploadFile
-from get_transcript import (
+
+from .get_transcript import (
     aggregate_emotions,
     fetch_job_predictions,
     group_transcription,
     parse_response,
 )
-from process_audio import start_inference_job
-from process_video import extract_audio
+from .process_audio import start_inference_job
+from .process_video import extract_audio
 
 app = FastAPI()
 

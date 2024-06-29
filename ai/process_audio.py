@@ -10,10 +10,6 @@ load_dotenv()
 HUMEAI_APIKEY = os.getenv("HUMEAI_APIKEY")
 HUMEAI_BATCH_JOB_ENDPOINT = os.getenv("HUMEAI_BATCH_JOB_ENDPOINT")
 
-# Debugging: Print the loaded environment variables
-print(f"API Key: {HUMEAI_APIKEY}")
-print(f"Batch Job Endpoint: {HUMEAI_BATCH_JOB_ENDPOINT}")
-
 
 def start_inference_job(file_path):
     with open(file_path, "rb") as f:

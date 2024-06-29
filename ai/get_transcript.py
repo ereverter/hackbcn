@@ -7,8 +7,9 @@ from collections import defaultdict
 from typing import Dict, List
 
 import requests
-from domain import HumePredictionResponse
 from dotenv import load_dotenv
+
+from .domain import HumePredictionResponse
 
 load_dotenv()
 
