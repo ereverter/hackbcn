@@ -51,12 +51,14 @@ async def process_video(file: UploadFile = File(...)):
 
 @app.post("/process_audio")
 async def process_audio(file: UploadFile = File(...)):
-    audio_path = save_file(file, f"uploads/{file.filename}")
+    temp_dir = "temp"
+    os.makedirs(temp_dir, exist_ok=True)
+    audio_path = save_file(file, f"temp/{file.filename}")
 
     try:
         # job_id = start_inference_job(audio_path)
         # return {"job_id": job_id}
-        time.wait(3)
+        time.sleep(3)
         return {"job_id": "782b9a58-b09b-4d9b-9ead-952b7a2d85a6"}
     except requests.exceptions.HTTPError as e:
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
