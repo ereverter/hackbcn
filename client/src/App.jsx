@@ -24,12 +24,13 @@ ChartJS.register(
 function App() {
   const [file, setFile] = useState();
   const [uploaded, setUploaded] = useState(false)
-  const data = {
-    labels: ['Thing 1', 'Thing 2', 'Thing 3', 'Thing 4', 'Thing 5', 'Thing 6'],
+  const [emotionSums, setEmotionSums] = useState({});
+  const [data, setData] = useState({
+    labels: [],
     datasets: [
       {
-        label: '# of Votes',
-        data: [2, 9, 3, 5, 2, 3],
+        label: 'Sum of Emotions',
+        data: [],
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -107,19 +108,22 @@ function App() {
     .then((result) => console.log(result))
     .finally(() => {
       setUploaded(true)
-      
+      processEmotionSums(data.grouped_transcription);
     })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   };
 
   return (
     <>
       <header class="flex border-b py-4 px-4 sm:px-10 bg-white font-[sans-serif] min-h-[70px] tracking-wide relative z-50">
-        <div class="flex flex-wrap items-center gap-5 w-full">
+        <div className="flex flex-wrap items-center gap-5 w-full">
           <a href="#">
             <img
               src="src/img/NervousFree-removebg-preview.png"
               alt="logo"
-              class="w-36"
+              className="w-36"
             />
           </a>
         </div>
