@@ -1,0 +1,117 @@
+{
+  "transcript": [
+      [
+        0,
+        "Our third finalist is Emily Johnston from the school of pharmacy and medical sciences. Her presentation title is Mosquito research, saving lives with panty hose and paper clips. I came to Australia to study the deadliest animal in the world. Now there may be some Australian audience members thinking, ruth, Science",
+        {
+          "Admiration": 0.32982826391034303,
+          "Anxiety": 0.15051421320177788,
+          "Boredom": 0.12686916915396576,
+          "Calmness": 0.25266174373432,
+          "Confusion": 0.15178775477826056,
+          "Disappointment": 0.21420706447085403,
+          "Doubt": 0.12377837824205394,
+          "Excitement": 1,
+          "Interest": 0.7964068801263425,
+          "Joy": 0.5921790147559033
+        }
+      ],
+      [
+        30,
+        "has finally recognize recognized the importance of the drop bears, but I'm not studying drop bears because around the world, by transmitting diseases like malaria and Dengue fever. Mosquitoes kill more than a million people every year, making them the deadliest animal in the plant Now in Australia, the most common mosquito borne disease is Ross River virus, and it occurs at high rates in some areas, but not others. My question is why, what is it about certain areas that make some breed disease. If we can understand the environmental",
+        {
+          "Admiration": 0.16236462340145238,
+          "Anxiety": 0.2746005101946926,
+          "Boredom": 0.17368445235143037,
+          "Calmness": 0.569239024168297,
+          "Confusion": 0.4649815994525366,
+          "Disappointment": 0.316012495762402,
+          "Doubt": 0.22569071631671841,
+          "Excitement": 0.5121232822707386,
+          "Interest": 0.767087986600817,
+          "Joy": 0.26707121293702113
+        }
+      ],
+      [
+        60,
+        "factors that contribute to disease transmission. Then we can alter the environment or target our control efforts to prevent human infections. But to answer that question, I had to find out where the infected mosquitoes were in South Australia, And traditionally, testing mosquitoes for virus has always been difficult. So I used a new technique. It takes these cards, which are embedded with virus, preserving chemicals, and coats them in honey. Mosquitoes will come to feed on the honey, and in the process spit virus onto the card where it can later be detected, Now no one had ever used this technique in a broad scale",
+        {
+          "Admiration": 0.13566353044437268,
+          "Anxiety": 0.22139409741020746,
+          "Boredom": 0.19872044951403864,
+          "Calmness": 0.5756490513475481,
+          "Confusion": 0.21491362850162382,
+          "Disappointment": 0.34135553866530455,
+          "Doubt": 0.18022833693530735,
+          "Excitement": 0.47485345012205216,
+          "Interest": 0.9788526182920477,
+          "Joy": 0.19414311566341902
+        }
+      ],
+      [
+        90,
+        "virus survey before. So I had to adapt it. I developed new traps and set them at over a hundred field sites across South Australia. And I captured over twenty thousand hungry mosquitoes and let them feed on the card for a week before testing the cards for a virus. Now, you may not think that these traps look very impressive. But science doesn't have to be beautiful. It has to be effective, and these traps are proving to be our most sensitive method of detecting infected mosquitoes. I found three types of infection. Ross river virus, bar forest virus, and",
+        {
+          "Admiration": 0.20084604679118742,
+          "Anxiety": 0.26547412965423933,
+          "Boredom": 0.22508619659273912,
+          "Calmness": 0.6413934594348772,
+          "Confusion": 0.23890702441570535,
+          "Disappointment": 0.40880119507066864,
+          "Doubt": 0.2243015473963425,
+          "Excitement": 0.5306661306576208,
+          "Interest": 0.8191860566437587,
+          "Joy": 0.2791070902210576
+        }
+      ],
+      [
+        120,
+        "stratford for virus, which has never before been found in South Australia. I now have the virus data I need to conduct my analysis, and I'm collecting publicly available data about the environment surrounding my traps. Like the density of human housing, the biodiversity of mammals and the ratio of green space to buildings to see if any of those environmental factors can link these virus hotspots spots that I've shown here. But the most exciting part of my research so far has been the success of this method. Public health officials in Victoria, Queensland and Western Australia have been in contact with us",
+        {
+          "Admiration": 0.25175508182096307,
+          "Anxiety": 0.23705655250184654,
+          "Boredom": 0.2022148272491646,
+          "Calmness": 0.5512142947305327,
+          "Confusion": 0.22435211487045745,
+          "Disappointment": 0.31025555332188515,
+          "Doubt": 0.18119200400085805,
+          "Excitement": 0.677948864048788,
+          "Interest": 1,
+          "Joy": 0.2748390777787423
+        }
+      ],
+      [
+        150,
+        "about implementing this technique for their surveillance next year. And I developed these traps in a tight budget. I used recycled milk cartons, panty holes and paper clips to make the traps. Each trap costs less than a dollar and can be reused for the whole season. That was important to me because the majority of mosquito borne disease risk happens an economically impoverished countries. In India, for example, where about a quarter of the population lives on a dollar a day, there are thirty three million cases of dengue in infection every year. With my low budget",
+        {
+          "Admiration": 0.16539182608921374,
+          "Anxiety": 0.1936996433152693,
+          "Boredom": 0.17618129612096792,
+          "Calmness": 0.47581342836167806,
+          "Confusion": 0.19926795034784012,
+          "Disappointment": 0.28916104244071605,
+          "Doubt": 0.15053119371571838,
+          "Excitement": 0.5223691829720152,
+          "Interest": 0.8398034172109836,
+          "Joy": 0.2217660806016367
+        }
+      ],
+      [
+        180,
+        "virus available and spatial analysis method. I can help any country regardless of resources, find out where their deadliest animals occur, why they're there and how we can stop them from infecting humans. Thanks.",
+        {
+          "Admiration": 0.1967864006161901,
+          "Anxiety": 0.23131714159729969,
+          "Boredom": 0.18401175312814105,
+          "Calmness": 0.714932348333278,
+          "Confusion": 0.2132421671291524,
+          "Disappointment": 0.2762576882956088,
+          "Doubt": 0.17728149304900284,
+          "Excitement": 0.3006473944063436,
+          "Interest": 0.8362654393889171,
+          "Joy": 0.16395473006159542
+        }
+      ]
+    ],
+  "ground_truth": "### Project Presentation: Mosquito Research - Saving Lives with Pantyhose and Paperclips --- #### Slide 1: Introduction - **Title**: Mosquito Research: Saving Lives with Pantyhose and Paperclips - **Presenter**: Emily Johnston - **Affiliation**: School of Pharmacy and Medical Sciences --- #### Slide 2: The Global Threat of Mosquitoes - **Key Point**: The deadliest animal on the planet is not a large predator but the small mosquito. - **Statistics**: Mosquitoes transmit diseases like malaria and dengue fever, killing over a million people annually. - **Relevance to Australia**: In Australia, the Ross River Virus is the most common mosquito-borne disease. --- #### Slide 3: Research Motivation - **Central Question**: Why do certain areas in Australia have higher rates of mosquito-borne diseases? - **Objective**: Understand environmental factors that contribute to disease transmission to prevent human infections. --- #### Slide 4: Innovative Methodology - **Traditional Challenges**: Testing mosquitoes for viruses has historically been difficult. - **New Technique**: Utilized virus-preserving cards coated with honey to attract mosquitoes, allowing for easier detection of viruses. - **Field Implementation**: Adapted this technique for broad-scale use, developing new traps and setting them at over 100 field sites across South Australia. --- #### Slide 5: Fieldwork and Data Collection - **Traps and Data**: - Over 20,000 mosquitoes captured and tested. - Identified three types of viruses: Ross River, Barmer Forest, and Stratford Virus (new to South Australia). - **Environmental Analysis**: Collected data on human housing density, mammal biodiversity, and green space ratios to link virus hotspots. --- #### Slide 6: Results and Impact - **Findings**: - The new method is the most sensitive for detecting infected mosquitoes. - Uncovered environmental factors contributing to virus prevalence. - **Public Health Applications**: - Interest from health officials in Victoria, Queensland, and Western Australia. - Potential for broader implementation in surveillance programs. --- #### Slide 7: Cost-Effective Innovation - **Budget Constraints**: Developed traps using recycled materials like milk cartons, pantyhose, and paperclips. - **Cost Efficiency**: Each trap costs less than a dollar and can be reused for an entire season. - **Global Relevance**: This low-budget method is particularly important for economically impoverished countries facing high mosquito-borne disease risks. --- #### Slide 8: Broader Implications - **Global Health Impact**: - India example: 33 million dengue cases annually, with many living on less than a dollar a day. - The new method can help any country, regardless of resources, to detect and control mosquito populations. - **Future Directions**: Expand this method to more regions, refine environmental analyses, and collaborate with global health organizations. --- #### Slide 9: Conclusion - **Summary**: - Successfully developed and implemented a cost-effective, sensitive method for mosquito virus detection. - Findings have the potential to transform mosquito surveillance and control worldwide. - **Acknowledgments**: Thank you for your attention. Questions are welcome. --- #### Slide 10: Questions and Discussion - **Q&A Session**: Open the floor for questions from the audience to discuss methodologies, findings, and future research directions."
+}

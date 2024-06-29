@@ -37,12 +37,6 @@ class PresentationEvaluation(BaseModel):
 # hume
 
 
-from typing import Any, Dict, List, Optional
-
-from pydantic import BaseModel
-
-
-# Define Pydantic models based on the response structure
 class HumeEmotion(BaseModel):
     name: str
     score: float
@@ -100,3 +94,15 @@ class HumePredictionResponse(BaseModel):
 class HumeResponse(BaseModel):
     predictions: List[HumePredictionResponse]
     errors: List[Any]
+
+
+# openai
+
+
+class TranscriptEvaluationRequest(BaseModel):
+    transcript: List[Any]
+    ground_truth: str
+
+
+class TranscriptEvaluationResponse(BaseModel):
+    feedback: str

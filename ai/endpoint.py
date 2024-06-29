@@ -2,12 +2,15 @@ import json
 import os
 from typing import Any, Dict
 
+import openai
 import requests
-from fastapi import FastAPI, File, HTTPException, UploadFile
 from dotenv import load_dotenv
+from fastapi import FastAPI, File, HTTPException, UploadFile
 
 load_dotenv()
 
+from .domain import TranscriptEvaluationRequest, TranscriptEvaluationResponse
+from .evaluate import create_prompt, create_system_prompt
 from .get_transcript import (
     aggregate_emotions,
     fetch_job_predictions,
@@ -87,3 +90,28 @@ async def fetch_predictions(job_id: str, agg_time: float):
         raise HTTPException(
             status_code=500, detail=f"An unexpected error occurred: {e}"
         )
+
+    from fastapi import FastAPI, HTTPException
+
+
+@app.post("/evaluate_transcript", response_model=TranscriptEvaluationResponse)
+async def evaluate_transcript(request: TranscriptEvaluationRequest):
+    try:
+        prompt = create_prompt(request.transcript, request.ground_truth)
+        client = openai.OpenAI()
+
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": create_system_prompt()},
+                {"role": "user", "content": prompt},
+            ],
+        )
+
+        print(response)
+        feedback = response.choices[0].message.content
+
+        return TranscriptEvaluationResponse(feedback=feedback)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
