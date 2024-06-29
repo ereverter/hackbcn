@@ -2,10 +2,24 @@ import express from "express";
 import multer from "multer";
 
 export const router = express.Router();
-const upload = multer({ dest: "./public/uploads/video" });
+// const upload = multer({ dest: "./public/uploads/video" });
 
-router.post("/uploadVideo", upload.single("video"), async (req, res) => {
-  const video = req.file;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, ".public/videoUpload");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const uploadVideo = multer({ storage: storage });
+
+// router.post("/uploadVideo", async (req, res) => {
+router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
+  console.log("hola");
+  const video = req.file.mimetype;
+  console.log("file", video);
 
   const response = await fetch("processVideo", {});
   const dataVideo = await response.json();
