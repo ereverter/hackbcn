@@ -4,6 +4,9 @@ from typing import Any, Dict
 
 import requests
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from .get_transcript import (
     aggregate_emotions,
@@ -52,8 +55,9 @@ async def process_audio(file: UploadFile = File(...)):
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
 
 
-@app.get("/fetch_predictions/{job_id}")
+@app.get("/fetch_predictions/{job_id}/{agg_time}")
 async def fetch_predictions(job_id: str, agg_time: float):
+    print(os.getenv("HUMEAI_APIKEY"))
     try:
         response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
         api_response = parse_response(response_json)
