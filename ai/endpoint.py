@@ -91,8 +91,6 @@ async def fetch_predictions(job_id: str, agg_time: float):
             status_code=500, detail=f"An unexpected error occurred: {e}"
         )
 
-    from fastapi import FastAPI, HTTPException
-
 
 @app.post("/evaluate_transcript", response_model=TranscriptEvaluationResponse)
 async def evaluate_transcript(request: TranscriptEvaluationRequest):
