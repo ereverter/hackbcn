@@ -12,25 +12,21 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const formData = new FormData();
-    // formData.append("file", file);
-    // fetch("http://localhost:4000/api/uploadVideo", {
-    //   method: "POST",
-    //   mode: "cors",
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    //   body: JSON.stringify({
-    //     video: file,
-    //   }),
-    // });
+    const formData = new FormData();
+    formData.append("video", file);
+    console.log(formData);
+    fetch("/uploadVideo", {
+      method: "POST",
+      body: formData,
+    }).then((result) => console.log(result));
   };
+
   return (
     <>
       <form
-        action="http://localhost:4000/api/uploadVideo"
+        // action="http://localhost:4000/api/uploadVideo"
         method="post"
-        encType="multipart/form-data"
+        // encType="multipart/form-data"
       >
         <input type="file" name="video" id="video" onChange={handleChange} />
         <button
