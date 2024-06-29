@@ -81,6 +81,39 @@ def aggregate_emotions(
     return emotion_aggregation
 
 
+def calculate_average_emotions(
+    api_response: List[HumePredictionResponse],
+) -> Dict[str, float]:
+    total_emotions = defaultdict(float)
+    emotion_counts = defaultdict(int)
+
+    for prediction_response in api_response:
+        for file_prediction in prediction_response.results.predictions:
+            for (
+                grouped_prediction
+            ) in file_prediction.models.prosody.grouped_predictions:
+                for prediction in grouped_prediction.predictions:
+                    for emotion in prediction.emotions:
+                        if (
+                            emotion.name.lower() in POSITIVE_EMOTIONS
+                            or emotion.name.lower() in NEGATIVE_EMOTIONS
+                        ):
+                            total_emotions[emotion.name] += emotion.score
+                            emotion_counts[emotion.name] += 1
+
+    average_emotions = {
+        emotion: total_emotions[emotion] / emotion_counts[emotion]
+        for emotion in total_emotions
+    }
+
+    max_avg_emotion = max(average_emotions.values(), default=1)
+    normalized_emotions = {
+        emotion: score / max_avg_emotion for emotion, score in average_emotions.items()
+    }
+
+    return normalized_emotions
+
+
 def filter_emotions(
     grouped_transcription: List[Tuple[float, str, Dict[str, float]]]
 ) -> List[Tuple[float, str, Dict[str, float]]]:
