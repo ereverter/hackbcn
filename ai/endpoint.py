@@ -1,114 +1,63 @@
-import uuid
-from typing import Dict, List
+import json
+import os
+from typing import Any, Dict
 
-from fastapi import BackgroundTasks, FastAPI, File, UploadFile
-from pydantic import BaseModel
+import requests
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from get_transcript import (
+    aggregate_emotions,
+    fetch_job_predictions,
+    group_transcription,
+    parse_response,
+)
+from process_audio import start_inference_job
+from process_video import extract_audio
 
 app = FastAPI()
 
-# Mock storage
-videos = {}
-transcriptions = {}
-comparisons = {}
-emotions = {}
-body_language_analysis = {}
+
+def save_file(file: UploadFile, destination: str):
+    with open(destination, "wb") as buffer:
+        buffer.write(file.file.read())
+    return destination
 
 
-# Models
-class CompareRequest(BaseModel):
-    transcription_id: str
-    concepts: List[str]
+@app.post("/process_video")
+async def process_video(file: UploadFile = File(...)):
+    video_path = save_file(file, f"uploads/{file.filename}")
+    audio_path = f"uploads/{os.path.splitext(file.filename)[0]}.wav"
+
+    try:
+        extract_audio(video_path, audio_path)
+        return {"audio_path": audio_path}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-class CompareResponse(BaseModel):
-    comparison_result: Dict[str, float]
+@app.post("/process_audio")
+async def process_audio(file: UploadFile = File(...)):
+    audio_path = save_file(file, f"uploads/{file.filename}")
+
+    try:
+        job_id = start_inference_job(audio_path)
+        return {"job_id": job_id}
+    except requests.exceptions.HTTPError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
 
 
-class EmotionAnalysisRequest(BaseModel):
-    audio_id: str
-
-
-class EmotionAnalysisResponse(BaseModel):
-    emotions: Dict[str, float]
-
-
-class BodyLanguageAnalysisRequest(BaseModel):
-    video_id: str
-
-
-class BodyLanguageAnalysisResponse(BaseModel):
-    body_language: Dict[str, float]
-
-
-def process_video(video_id: str):
-    # Placeholder for video processing
-    pass
-
-
-def transcribe_audio(video_id: str) -> str:
-    # Placeholder for transcription logic
-    return "transcribed text"
-
-
-def compare_concepts(transcription: str, concepts: List[str]) -> Dict[str, float]:
-    # Placeholder for concept comparison logic
-    return {concept: 0.5 for concept in concepts}
-
-
-def analyze_emotion(audio_id: str) -> Dict[str, float]:
-    # Placeholder for emotion analysis logic
-    return {"happy": 0.8, "sad": 0.2}
-
-
-def analyze_body_language(video_id: str) -> Dict[str, float]:
-    # Placeholder for body language analysis logic
-    return {"positive": 0.7, "negative": 0.3}
-
-
-# Endpoints
-@app.post("/upload")
-async def upload_video(file: UploadFile = File(...)):
-    video_id = str(uuid.uuid4())
-    videos[video_id] = file.filename
-    # Process video in background
-    BackgroundTasks().add_task(process_video, video_id)
-    return {"video_id": video_id}
-
-
-@app.post("/transcribe")
-async def transcribe(video_id: str):
-    transcription = transcribe_audio(video_id)
-    transcription_id = str(uuid.uuid4())
-    transcriptions[transcription_id] = transcription
-    return {"transcription_id": transcription_id, "transcription": transcription}
-
-
-@app.post("/compare", response_model=CompareResponse)
-async def compare_concepts_endpoint(request: CompareRequest):
-    transcription = transcriptions.get(request.transcription_id, "")
-    comparison_result = compare_concepts(transcription, request.concepts)
-    comparison_id = str(uuid.uuid4())
-    comparisons[comparison_id] = comparison_result
-    return {"comparison_result": comparison_result}
-
-
-@app.post("/analyze-emotion", response_model=EmotionAnalysisResponse)
-async def analyze_emotion_endpoint(request: EmotionAnalysisRequest):
-    emotions_result = analyze_emotion(request.audio_id)
-    emotion_analysis_id = str(uuid.uuid4())
-    emotions[emotion_analysis_id] = emotions_result
-    return {"emotions": emotions_result}
-
-
-@app.post("/analyze-body-language", response_model=BodyLanguageAnalysisResponse)
-async def analyze_body_language_endpoint(request: BodyLanguageAnalysisRequest):
-    body_language_result = analyze_body_language(request.video_id)
-    body_language_id = str(uuid.uuid4())
-    body_language_analysis[body_language_id] = body_language_result
-    return {"body_language": body_language_result}
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/fetch_predictions/{job_id}")
+async def fetch_predictions(job_id: str):
+    try:
+        response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
+        api_response = parse_response(response_json)
+        transcription_text = group_transcription(api_response)
+        emotions_aggregated = aggregate_emotions(api_response, 30.0 * 60)
+        return {"transcription": transcription_text, "emotions": emotions_aggregated}
+    except requests.exceptions.HTTPError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=500, detail=f"Error decoding JSON: {e}")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"An unexpected error occurred: {e}"
+        )
