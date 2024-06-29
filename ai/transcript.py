@@ -6,44 +6,49 @@ import argparse
 
 load_dotenv()
 
-HUMEAI_APIKEY = os.getenv["HUMEAI_APIKEY"]
-HUMEAI_UPLOAD_ENDPOINT = os.getenv["HUMEAI_UPLOAD_ENDPOINT"]
-HUMEAI_BATCH_JOB_ENDPOINT = os.getenv["HUMEAI_BATCH_JOB_ENDPOINT"]
+HUMEAI_APIKEY = os.getenv("HUMEAI_APIKEY")
+HUMEAI_BATCH_JOB_ENDPOINT = os.getenv("HUMEAI_BATCH_JOB_ENDPOINT")
 
-def upload_file(file_path):
+# Debugging: Print the loaded environment variables
+print(f'API Key: {HUMEAI_APIKEY}')
+print(f'Batch Job Endpoint: {HUMEAI_BATCH_JOB_ENDPOINT}')
+
+def start_inference_job(file_path):
     with open(file_path, 'rb') as f:
+        files = {'file': f}
+        data = {
+            "json": json.dumps({
+                "models": {
+                    "prosody": {
+                        "granularity": "utterance",
+                        "identify_speakers": False
+                    }
+                },
+                "notify": True
+            })
+        }
+        
         response = requests.post(
-            HUMEAI_UPLOAD_ENDPOINT,
-            headers={'Authorization': f'Bearer {HUMEAI_APIKEY}'},
-            files={'file': f}
+            HUMEAI_BATCH_JOB_ENDPOINT,
+            headers={
+                'X-Hume-Api-Key': HUMEAI_APIKEY
+            },
+            files=files,
+            data=data
         )
         response.raise_for_status()
-        return response.json()['file_id']
+        return response.json()['job_id']
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process an audio file for emotion analysis and transcript extraction.")
-    parser.add_argument('-f', '--audio_file', type=str, help='Path to the audio file to be processed')
+    parser.add_argument('-f', '--audio_file', type=str, required=True, help='Path to the audio file to be processed')
     args = parser.parse_args()
 
-    video_file_path = args.video_file
-    video_file_id = upload_file(video_file_path)
+    audio_file_path = args.audio_file
 
-    batch_job_payload = {
-        "models": {
-            "prosody": {
-                "granularity": "utterance",
-                "identify_speakers": False
-            }
-        },
-        "registry_files": [video_file_id],
-    }
-
-    response = requests.post(
-        HUMEAI_BATCH_JOB_ENDPOINT,
-        headers={'Authorization': f'Bearer {HUMEAI_APIKEY}', 'Content-Type': 'application/json'},
-        data=json.dumps(batch_job_payload)
-    )
-
-    response.raise_for_status()
-    job_id = response.json()['job_id']
-    print(f'Batch job created with ID: {job_id}')
+    try:
+        job_id = start_inference_job(audio_file_path)
+        print(f'Batch job created with ID: {job_id}')
+    except requests.exceptions.HTTPError as e:
+        print(f'HTTP error occurred: {e}')
+        print(f'Response content: {e.response.content}')
