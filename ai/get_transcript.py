@@ -9,6 +9,7 @@ from typing import Dict, List, Tuple
 import requests
 from dotenv import load_dotenv
 
+from .config import NEGATIVE_EMOTIONS, POSITIVE_EMOTIONS
 from .domain import HumePredictionResponse
 
 load_dotenv()
@@ -27,16 +28,6 @@ def fetch_job_predictions(job_id: str, api_key: str) -> str:
 
 def parse_response(response_json: str):
     response_dict = json.loads(response_json)
-
-    # def print_keys(d, level=0):
-    #     if isinstance(d, dict):
-    #         for key, value in d.items():
-    #             print("  " * level + f"Level {level}: {key}")
-    #             print_keys(value, level + 1)
-    #     elif isinstance(d, list):
-    #         for item in d:
-    #             print_keys(item, level)
-
     return [HumePredictionResponse(**prediction) for prediction in response_dict]
 
 
@@ -53,28 +44,9 @@ def group_transcription(api_response: List[HumePredictionResponse]) -> str:
 
 
 def group_transcription_by_time(
-    transcript: List[Tuple[float, str]], interval: float
-) -> Dict[float, str]:
-    transcript_aggregation = defaultdict(str)
-
-    for time, text in transcript:
-        interval_start = int(time // interval) * interval
-        transcript_aggregation[interval_start] += f" {text}"
-
-    # Strip leading and trailing whitespaces from each grouped transcript
-    for interval_start in transcript_aggregation:
-        transcript_aggregation[interval_start] = transcript_aggregation[
-            interval_start
-        ].strip()
-
-    return dict(transcript_aggregation)
-
-
-def aggregate_emotions(
     api_response: List[HumePredictionResponse], interval: float
-) -> Dict[float, Dict[str, float]]:
-    emotion_aggregation = defaultdict(lambda: defaultdict(float))
-
+) -> Dict[float, List[Tuple[str, Dict[str, float]]]]:
+    transcript_aggregation = defaultdict(list)
     for prediction_response in api_response:
         for file_prediction in prediction_response.results.predictions:
             for (
@@ -83,18 +55,47 @@ def aggregate_emotions(
                 for prediction in grouped_prediction.predictions:
                     start_time = prediction.time.begin
                     interval_start = int(start_time // interval) * interval
-                    for emotion in prediction.emotions:
-                        emotion_aggregation[interval_start][
-                            emotion.name
-                        ] += emotion.score
+                    emotions = {
+                        emotion.name: emotion.score for emotion in prediction.emotions
+                    }
+                    transcript_aggregation[interval_start].append(
+                        (prediction.text, emotions)
+                    )
+    return dict(transcript_aggregation)
 
-    for interval_start, emotions in emotion_aggregation.items():
-        max_score = max(emotions.values(), default=1)
+
+def aggregate_emotions(
+    grouped_transcript: Dict[float, List[Tuple[str, Dict[str, float]]]]
+) -> Dict[float, Dict[str, float]]:
+    emotion_aggregation = {}
+    for interval_start, texts_emotions in grouped_transcript.items():
+        aggregated_emotions = defaultdict(float)
+        for text, emotions in texts_emotions:
+            for emotion, score in emotions.items():
+                aggregated_emotions[emotion] += score
+        max_score = max(aggregated_emotions.values(), default=1)
         if max_score > 0:
-            for emotion in emotions:
-                emotions[emotion] /= max_score
+            for emotion in aggregated_emotions:
+                aggregated_emotions[emotion] /= max_score
+        emotion_aggregation[interval_start] = dict(aggregated_emotions)
+    return emotion_aggregation
 
-    return dict(emotion_aggregation)
+
+def filter_emotions(
+    grouped_transcription: List[Tuple[float, str, Dict[str, float]]]
+) -> List[Tuple[float, str, Dict[str, float]]]:
+    filtered_transcription = []
+    for interval_start, combined_text, emotions in grouped_transcription:
+        filtered_emotions = {
+            emotion: score
+            for emotion, score in emotions.items()
+            if emotion.lower() in POSITIVE_EMOTIONS
+            or emotion.lower() in NEGATIVE_EMOTIONS
+        }
+        filtered_transcription.append(
+            (interval_start, combined_text, filtered_emotions)
+        )
+    return filtered_transcription
 
 
 def main():
