@@ -25,10 +25,14 @@ def save_file(file: UploadFile, destination: str):
 
 @app.post("/process_video")
 async def process_video(file: UploadFile = File(...)):
-    video_path = save_file(file, f"uploads/{file.filename}")
-    audio_path = f"uploads/{os.path.splitext(file.filename)[0]}.wav"
+    temp_dir = "temp"
+    os.makedirs(temp_dir, exist_ok=True)
+
+    video_path = os.path.join(temp_dir, file.filename)
+    audio_path = os.path.join(temp_dir, f"{os.path.splitext(file.filename)[0]}.wav")
 
     try:
+        save_file(file, video_path)
         extract_audio(video_path, audio_path)
         return {"audio_path": audio_path}
     except Exception as e:
