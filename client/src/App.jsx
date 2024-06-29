@@ -26,8 +26,21 @@ function App() {
   const [dataFetch, setDatafetch] = useState();
   const [uploaded, setUploaded] = useState(false);
   console.log(dataFetch);
+  const objetFromFetch = {};
+
   const data = {
-    labels: ["Thing 1", "Thing 2", "Thing 3", "Thing 4", "Thing 5", "Thing 6"],
+    labels: [
+      "Admiration",
+      "Anxiety",
+      "Boredom",
+      "Calmness",
+      "Confusion",
+      "Dussapointment",
+      "Doubt",
+      "Excitement",
+      "Interest",
+      "Joy",
+    ],
     datasets: [
       {
         label: "# of Votes",
