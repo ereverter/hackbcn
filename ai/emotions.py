@@ -1,11 +1,13 @@
+# hume_analysis.py
+
 import argparse
 import json
 import os
 from collections import defaultdict
-from typing import Dict
+from typing import Dict, List
 
 import requests
-from domain import HumeResponse
+from domain import HumePredictionResponse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,15 +16,32 @@ HUMEAI_APIKEY = os.getenv("HUMEAI_APIKEY")
 HUMEAI_PREDICTION_ENDPOINT = "https://api.hume.ai/v0/batch/jobs/{job_id}/predictions"
 
 
-def parse_response(response_json: str) -> HumeResponse:
+def fetch_job_predictions(job_id: str, api_key: str) -> str:
+    url = HUMEAI_PREDICTION_ENDPOINT.format(job_id=job_id)
+    headers = {"X-Hume-Api-Key": api_key}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.text
+
+
+def parse_response(response_json: str):
     response_dict = json.loads(response_json)
-    print(response_dict)
-    return HumeResponse(**response_dict[0])
+
+    # def print_keys(d, level=0):
+    #     if isinstance(d, dict):
+    #         for key, value in d.items():
+    #             print("  " * level + f"Level {level}: {key}")
+    #             print_keys(value, level + 1)
+    #     elif isinstance(d, list):
+    #         for item in d:
+    #             print_keys(item, level)
+
+    return [HumePredictionResponse(**prediction) for prediction in response_dict]
 
 
-def group_transcription(api_response: HumeResponse) -> str:
+def group_transcription(api_response: List[HumePredictionResponse]) -> str:
     transcriptions = []
-    for prediction_response in api_response.predictions:
+    for prediction_response in api_response:
         for file_prediction in prediction_response.results.predictions:
             for (
                 grouped_prediction
@@ -33,10 +52,10 @@ def group_transcription(api_response: HumeResponse) -> str:
 
 
 def aggregate_emotions(
-    api_response: HumeResponse, interval: float
+    api_response: List[HumePredictionResponse], interval: float
 ) -> Dict[float, Dict[str, float]]:
     emotion_aggregation = defaultdict(lambda: defaultdict(float))
-    for prediction_response in api_response.predictions:
+    for prediction_response in api_response:
         for file_prediction in prediction_response.results.predictions:
             for (
                 grouped_prediction
@@ -49,7 +68,6 @@ def aggregate_emotions(
                             emotion.name
                         ] += emotion.score
 
-    # normalize scores
     for interval_start, emotions in emotion_aggregation.items():
         total_score = sum(emotions.values())
         if total_score > 0:
@@ -59,15 +77,7 @@ def aggregate_emotions(
     return dict(emotion_aggregation)
 
 
-def fetch_job_predictions(job_id: str, api_key: str) -> str:
-    url = HUMEAI_PREDICTION_ENDPOINT.format(job_id=job_id)
-    headers = {"X-Hume-Api-Key": api_key}
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    return response.text
-
-
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Fetch and analyze job predictions from Hume AI."
     )
@@ -75,8 +85,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--interval",
         type=float,
-        default=5.0,
-        help="Interval in minutes to aggregate emotions",
+        default=30.0,
+        help="Interval in seconds to aggregate emotions",
     )
     args = parser.parse_args()
 
@@ -100,3 +110,11 @@ if __name__ == "__main__":
     except requests.exceptions.HTTPError as e:
         print(f"HTTP error occurred: {e}")
         print(f"Response content: {e.response.content}")
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+
+if __name__ == "__main__":
+    main()

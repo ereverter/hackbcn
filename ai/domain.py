@@ -37,6 +37,12 @@ class PresentationEvaluation(BaseModel):
 # hume
 
 
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel
+
+
+# Define Pydantic models based on the response structure
 class HumeEmotion(BaseModel):
     name: str
     score: float
@@ -51,8 +57,8 @@ class HumePrediction(BaseModel):
     text: str
     time: HumeTime
     confidence: Optional[float]
-    emotions: List[HumeEmotion]
     speaker_confidence: Optional[float]
+    emotions: List[HumeEmotion]
 
 
 class HumeGroupedPrediction(BaseModel):
@@ -71,6 +77,7 @@ class HumeModels(BaseModel):
 
 class HumeFilePrediction(BaseModel):
     file: str
+    file_type: Optional[str]
     models: HumeModels
 
 
@@ -80,9 +87,9 @@ class HumeResult(BaseModel):
 
 class HumeSource(BaseModel):
     type: str
-    filename: str
+    filename: Optional[str]
     content_type: Optional[str]
-    md5sum: str
+    md5sum: Optional[str]
 
 
 class HumePredictionResponse(BaseModel):
