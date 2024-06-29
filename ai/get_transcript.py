@@ -4,7 +4,7 @@ import argparse
 import json
 import os
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import requests
 from dotenv import load_dotenv
@@ -52,10 +52,29 @@ def group_transcription(api_response: List[HumePredictionResponse]) -> str:
     return " ".join(transcriptions)
 
 
+def group_transcription_by_time(
+    transcript: List[Tuple[float, str]], interval: float
+) -> Dict[float, str]:
+    transcript_aggregation = defaultdict(str)
+
+    for time, text in transcript:
+        interval_start = int(time // interval) * interval
+        transcript_aggregation[interval_start] += f" {text}"
+
+    # Strip leading and trailing whitespaces from each grouped transcript
+    for interval_start in transcript_aggregation:
+        transcript_aggregation[interval_start] = transcript_aggregation[
+            interval_start
+        ].strip()
+
+    return dict(transcript_aggregation)
+
+
 def aggregate_emotions(
     api_response: List[HumePredictionResponse], interval: float
 ) -> Dict[float, Dict[str, float]]:
     emotion_aggregation = defaultdict(lambda: defaultdict(float))
+
     for prediction_response in api_response:
         for file_prediction in prediction_response.results.predictions:
             for (
@@ -70,10 +89,10 @@ def aggregate_emotions(
                         ] += emotion.score
 
     for interval_start, emotions in emotion_aggregation.items():
-        total_score = sum(emotions.values())
-        if total_score > 0:
+        max_score = max(emotions.values(), default=1)
+        if max_score > 0:
             for emotion in emotions:
-                emotions[emotion] /= total_score
+                emotions[emotion] /= max_score
 
     return dict(emotion_aggregation)
 

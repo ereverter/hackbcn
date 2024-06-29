@@ -47,12 +47,12 @@ async def process_audio(file: UploadFile = File(...)):
 
 
 @app.get("/fetch_predictions/{job_id}")
-async def fetch_predictions(job_id: str):
+async def fetch_predictions(job_id: str, agg_time: float):
     try:
         response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
         api_response = parse_response(response_json)
         transcription_text = group_transcription(api_response)
-        emotions_aggregated = aggregate_emotions(api_response, 30.0 * 60)
+        emotions_aggregated = aggregate_emotions(api_response, agg_time)
         return {"transcription": transcription_text, "emotions": emotions_aggregated}
     except requests.exceptions.HTTPError as e:
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
