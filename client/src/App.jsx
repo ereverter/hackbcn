@@ -1,7 +1,6 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useState, useEffect } from "react";
 import "./App.css";
+import dataExample from './exampleJsonData/response.json'
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -24,19 +23,74 @@ ChartJS.register(
 
 function App() {
   const [file, setFile] = useState();
-  const [uploaded, setUploaded] = useState(false);
+  const [uploaded, setUploaded] = useState(false)
   const data = {
-    labels: ["Thing 1", "Thing 2", "Thing 3", "Thing 4", "Thing 5", "Thing 6"],
+    labels: ['Thing 1', 'Thing 2', 'Thing 3', 'Thing 4', 'Thing 5', 'Thing 6'],
     datasets: [
       {
-        label: "# of Votes",
+        label: '# of Votes',
         data: [2, 9, 3, 5, 2, 3],
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
       },
     ],
+  });
+
+  const processEmotionSums = (grouped_transcription) => {
+    const emotionSums = {};
+
+    grouped_transcription.forEach(([time, text, emotions]) => {
+      for (const [emotion, value] of Object.entries(emotions)) {
+        if (!emotionSums[emotion]) {
+          emotionSums[emotion] = 0;
+        }
+        emotionSums[emotion] += value;
+      }
+    });
+
+    setEmotionSums(emotionSums);
+    setData({
+      labels: Object.keys(emotionSums),
+      datasets: [
+        {
+          label: 'Sum of Emotions',
+          data: Object.values(emotionSums),
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+        },
+      ],
+    });
   };
+  // useEffect(() => {
+  //   const emotionSums = {};
+
+  //   dataExample.grouped_transcription.forEach(([time, text, emotions]) => {
+  //     for (const [emotion, value] of Object.entries(emotions)) {
+  //       if (!emotionSums[emotion]) {
+  //         emotionSums[emotion] = 0;
+  //       }
+  //       emotionSums[emotion] += value;
+  //     }
+  //     console.log(emotionSums)
+  //   });
+
+  //   console.log('Suma de las emociones:', emotionSums);
+  // }, [dataExample]);
+  // const data = {
+  //   labels: ['Admiration', 'Anxiety', 'Boredom', 'Calmness', 'Confusion', 'Disappointment', 'Doubt', 'Excitement', 'Interest', 'Joy'],
+
+  //   datasets: [
+  //     {
+  //       label: '# of Votes',
+  //       data: [2, 9, 3, 5, 2, 3],
+  //       backgroundColor: 'rgba(255, 99, 132, 0.2)',
+  //       borderColor: 'rgba(255, 99, 132, 1)',
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
   const handleChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -50,10 +104,11 @@ function App() {
       method: "POST",
       body: formData,
     })
-      .then((result) => console.log(result))
-      .finally(() => {
-        setUploaded(true);
-      });
+    .then((result) => console.log(result))
+    .finally(() => {
+      setUploaded(true)
+      
+    })
   };
 
   return (
