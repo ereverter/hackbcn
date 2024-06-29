@@ -11,7 +11,9 @@ load_dotenv()
 from .get_transcript import (
     aggregate_emotions,
     fetch_job_predictions,
+    filter_emotions,
     group_transcription,
+    group_transcription_by_time,
     parse_response,
 )
 from .process_audio import start_inference_job
@@ -59,9 +61,24 @@ async def fetch_predictions(job_id: str, agg_time: float):
     try:
         response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
         api_response = parse_response(response_json)
+
         transcription_text = group_transcription(api_response)
-        emotions_aggregated = aggregate_emotions(api_response, agg_time)
-        return {"transcription": transcription_text, "emotions": emotions_aggregated}
+
+        grouped_transcription = group_transcription_by_time(api_response, agg_time)
+        emotions_aggregated = aggregate_emotions(grouped_transcription)
+
+        detailed_transcription = []
+        for interval_start, texts_emotions in grouped_transcription.items():
+            combined_text = " ".join(text for text, _ in texts_emotions)
+            interval_emotions = emotions_aggregated[interval_start]
+            detailed_transcription.append(
+                (interval_start, combined_text, interval_emotions)
+            )
+
+        return {
+            "transcription": transcription_text,
+            "grouped_transcription": filter_emotions(detailed_transcription),
+        }
     except requests.exceptions.HTTPError as e:
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
     except json.JSONDecodeError as e:
