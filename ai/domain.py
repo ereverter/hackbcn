@@ -1,78 +1,95 @@
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-from typing import List
+
 
 class VideoInput(BaseModel):
     video: str
 
+
 class AudioInput(BaseModel):
     audio: str
+
 
 class AudioTranscript(BaseModel):
     transcript: List[str]
     timestamps: List[str]
     emotions: List[str]
 
+
 class VideoFrames(BaseModel):
     frames: List[str]
+
 
 class FramesBodyLangyage(BaseModel):
     frames: List[str]
     body_language: List[str]
 
+
 class GroundTranscript(BaseModel):
     transcript: str
+
 
 class PresentationEvaluation(BaseModel):
     evaluation: str
 
 
 # hume
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
 
-class HEmotion(BaseModel):
+
+class HumeEmotion(BaseModel):
     name: str
     score: float
 
-class HTime(BaseModel):
+
+class HumeTime(BaseModel):
     begin: float
     end: float
 
-class HPrediction(BaseModel):
+
+class HumePrediction(BaseModel):
     text: str
-    time: HTime
+    time: HumeTime
     confidence: Optional[float]
-    emotions: List[HEmotion]
+    emotions: List[HumeEmotion]
     speaker_confidence: Optional[float]
 
-class HGroupedPrediction(BaseModel):
+
+class HumeGroupedPrediction(BaseModel):
     id: str
-    predictions: List[HPrediction]
+    predictions: List[HumePrediction]
 
-class HProsodyModel(BaseModel):
+
+class HumeProsodyModel(BaseModel):
     metadata: Dict[str, Any]
-    grouped_predictions: List[HGroupedPrediction]
+    grouped_predictions: List[HumeGroupedPrediction]
 
-class HModels(BaseModel):
-    prosody: HProsodyModel
 
-class HFilePrediction(BaseModel):
+class HumeModels(BaseModel):
+    prosody: HumeProsodyModel
+
+
+class HumeFilePrediction(BaseModel):
     file: str
-    models: HModels
+    models: HumeModels
 
-class HResult(BaseModel):
-    predictions: List[HFilePrediction]
 
-class HSource(BaseModel):
+class HumeResult(BaseModel):
+    predictions: List[HumeFilePrediction]
+
+
+class HumeSource(BaseModel):
     type: str
     filename: str
     content_type: Optional[str]
     md5sum: str
 
-class HPredictionResponse(BaseModel):
-    source: HSource
-    results: HResult
+
+class HumePredictionResponse(BaseModel):
+    source: HumeSource
+    results: HumeResult
+
 
 class HumeResponse(BaseModel):
-    predictions: List[HPredictionResponse]
+    predictions: List[HumePredictionResponse]
     errors: List[Any]
