@@ -24,13 +24,14 @@ ChartJS.register(
 function App() {
   const [form, setForm] = useState({ video: "", text: "" });
   const [dataFetch, setDatafetch] = useState();
+  const [evaluation, setEvaluation] = useState();
   const [uploaded, setUploaded] = useState(false);
   console.log(dataFetch);
   const objetFromFetch = [];
   // let data = {};
-  if (dataFetch) {
-    dataFetch.map((item) => objetFromFetch.push(item));
-  }
+  // if (dataFetch) {
+  //   dataFetch.map((item) => objetFromFetch.push(item));
+  // }
   const data = {
     labels: [
       "Admiration",
@@ -131,8 +132,11 @@ function App() {
     })
       .then(async (result) => {
         const data = await result.json();
-        console.log("data from fetch:", data);
-        setDatafetch(data.data);
+        // console.log("data from fetch:", data);
+        setDatafetch(data);
+        const ev = JSON.parse(data.evaluation);
+        console.log("erer", ev);
+        setEvaluation(ev);
       })
       .finally(() => {
         setUploaded(true);
@@ -274,8 +278,29 @@ function App() {
               </div>
             )}
           </section>
-          <div>
-            <p>{dataFetch.evaluation}</p>
+          <div className="flex justify-center text-left">
+            {evaluation != undefined && (
+              <div className="m-8 border p-10 rounded-md">
+                <h1 className="text-2xl font-bold text-center mb-5">Errors</h1>
+                <ul className="w-[300px]">
+                  {evaluation.errors.map((item) => {
+                    return <li className="list-disc">{item}</li>;
+                  })}
+                </ul>
+              </div>
+            )}
+            {evaluation != undefined && (
+              <div className="m-8 border p-10 rounded-md">
+                <h1 className="text-2xl font-bold text-center mb-5">
+                  Recommendations
+                </h1>
+                <ul className="w-[300px]">
+                  {evaluation.recommendations.map((item) => {
+                    return <li className="list-disc">{item}</li>;
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </main>
