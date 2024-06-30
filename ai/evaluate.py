@@ -5,6 +5,8 @@ from typing import Any, Dict, List
 import openai
 from dotenv import load_dotenv
 
+from .config import ANALYSIS_INTERVAL_SECONDS
+
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -45,15 +47,13 @@ def create_system_prompt() -> str:
 
     When evaluating a transcript against the provided ground truth, you should focus on the following areas:
 
-    1. **Specific Timestamps:** Identify precise moments in the transcript where improvements can be made. These should be points where the speaker's performance deviates from the expected delivery or where enhancements could significantly improve the overall presentation.
+    1. **Specific Timestamps and Deviations from the Original Plan:** Identify precise moments in the transcript where improvements can be made. The should be pointed out only if the deviance from the plan is significant, otherwise it is okay.
 
-    2. **Deviations from the Original Plan:** Highlight parts of the speech where the speaker strayed from the planned content. This includes both minor deviations and significant departures that could impact the effectiveness of the presentation.
+    2. **General Comments on Delivery and Emotion:** Provide insights into the speaker's delivery given the provided emotions values. If body langauge analysis is also available, add more value to the answer with it given any issues.
 
-    3. **General Comments on Delivery and Emotion:** Provide insights into the speaker's delivery given the provided emotions values. If body langauge analysis is also available, add more value to the answer with it given any issues.
+    3. NO YAPPING
 
-    4. NO YAPPING
-
-    Your feedback should be organized in a clear and understandable manner. The final response should be a JSON object containing two main keys:
+    Your feedback should be organized in a clear and understandable manner. Make it brief and concise. The final response should be a JSON object containing two main keys:
     - "errors": A list of strings, each pointing out a specific error or area for improvement.
     - "recommendations": A list of strings, each offering a constructive suggestion to enhance the presentation.
 
@@ -119,11 +119,11 @@ def get_body_language_evaluation(frames_path: str, interval: int):
 def evaluate(transcript, ground_truth, body_language_activated=True):
     body_language = None
     if body_language_activated:
-        body_language = get_body_language_evaluation("temp/")
+        body_language = get_body_language_evaluation(
+            "temp/", interval=ANALYSIS_INTERVAL_SECONDS
+        )
     prompt = create_prompt(transcript, ground_truth, body_language)
     client = openai.OpenAI()
-
-    print(prompt)
 
     response = client.chat.completions.create(
         model="gpt-4o",
@@ -133,6 +133,5 @@ def evaluate(transcript, ground_truth, body_language_activated=True):
         ],
     )
 
-    print(response)
     feedback = response.choices[0].message.content
     return feedback
