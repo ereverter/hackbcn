@@ -280,7 +280,7 @@ function App() {
           </section>
           <div className="flex justify-center text-left">
             {evaluation != undefined && (
-              <div className="m-8 border p-10 rounded-md">
+              <div className="m-8 border p-10 rounded-md bg-red-100">
                 <h1 className="text-2xl font-bold text-center mb-5">Errors</h1>
                 <ul className="w-[300px]">
                   {evaluation.errors.map((item) => {
@@ -290,7 +290,7 @@ function App() {
               </div>
             )}
             {evaluation != undefined && (
-              <div className="m-8 border p-10 rounded-md">
+              <div className="m-8 border p-10 rounded-md bg-green-100">
                 <h1 className="text-2xl font-bold text-center mb-5">
                   Recommendations
                 </h1>
