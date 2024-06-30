@@ -40,7 +40,7 @@ function App() {
         borderWidth: 1,
       },
     ],
-  };
+  });
 
   const processEmotionSums = (grouped_transcription) => {
     const emotionSums = {};
@@ -91,8 +91,8 @@ function App() {
       body: formData,
     })
     .then(async (result) =>{     
-      //const data = await result.json();
-      console.log(dataExample)
+      const data = await result.json();
+      console.log(data)
       if (dataExample && dataExample.grouped_transcription) {
 
       processEmotionSums(dataExample.grouped_transcription);
@@ -234,7 +234,7 @@ function App() {
                       obcaecati? Repellat recusandae quam rem ratione et magnam
                       corporis autem quas nobis cum magni aspernatur, corrupti
                       dolore temporibus harum, consequuntur quasi sint, quidem
-                      iusto dignissimos veniam eos itaque soluta!{" "}
+                      iusto dignissimos veniam eos itaque soluta!
                     </p>
                   </article>
                 </div>
