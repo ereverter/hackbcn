@@ -122,7 +122,7 @@ function App() {
 
   return (
     <>
-      <header className="flex border-b py-4 px-4 sm:px-10 bg-white font-[sans-serif] min-h-[70px] tracking-wide relative z-50">
+      <header className="flex border-b  px-4 sm:px-10 bg-white font-[sans-serif] min-h-[70px] tracking-wide relative z-50">
         <div className="flex flex-wrap items-center gap-5 w-full">
           <a href="#">
             <img
@@ -133,13 +133,13 @@ function App() {
           </a>
         </div>
       </header>
-      <main className="container bg-slate-200 w-full p-20 content-center">
+      <main className="container bg-slate-200 w-full p-10 py-5 mx-auto justify-center">
         <div className="text-center my-8">
           <h1 className="text-8xl font-bold text-gray-900">Pitch AI</h1>
           <h2 className="text-2xl font-light text-gray-600 mt-4">
             Rehearse with Multimodal-based Feedback
           </h2>
-          <section className="w-full m-10 ">
+          <section className="w-full m-10 mx-auto ">
             {!uploaded && (
               <form
                 // action="http://localhost:4000/api/uploadVideo"
@@ -242,6 +242,9 @@ function App() {
           </div>
         </div>
       </main>
+      <footer className="text-gray-400">
+        2024 Patch AI. All right reserved
+      </footer>
     </>
   );
 }
