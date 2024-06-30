@@ -23,7 +23,8 @@ const uploadVideo = multer({ storage: storage });
 router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
   console.log("videoData", req.file);
 
-  const text = req.body;
+  const { text } = req.body;
+  // console.log("text:", text);
   const file = req.file;
   // const video = req.files.mimetype;
   // const data = req.body.file;
@@ -31,6 +32,7 @@ router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
   const formData = new FormData();
   // formData.append("file", req.file.path);
   formData.append("file", fs.createReadStream(file.path), file.originalname);
+  formData.append("text", text);
   try {
     const responseVideo = await fetch("http://localhost:8000/process_video", {
       method: "POST",
@@ -45,6 +47,16 @@ router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
       `http://localhost:8000/fetch_predictions/${job_id}/${agg_time}`
     );
     const dataTansf = await responsePredict.json();
+    const payload = {
+      transcript: dataTansf,
+      ground_truth: text,
+    };
+    const responseEvaluate = await fetch(
+      "http://localhost:8000/evaluate_transcript",
+      { body: payload, method: "POST" }
+    );
+    const dataEvaluate = await responseEvaluate.json();
+    console.log(dataEvaluate);
     console.log(dataTansf.emotions_summary);
     const response = dataTansf.emotions_summary;
     res.send(response);

@@ -27,33 +27,33 @@ function App() {
   const [uploaded, setUploaded] = useState(false);
   console.log(dataFetch);
   const objetFromFetch = [];
-  let dataOBJ = {};
-  if (dataFetch) {
-    dataFetch.map((item) => objetFromFetch.push(item));
-    dataOBJ = {
-      labels: [
-        "Admiration",
-        "Anxiety",
-        "Boredom",
-        "Calmness",
-        "Confusion",
-        "Dussapointment",
-        "Doubt",
-        "Excitement",
-        "Interest",
-        "Joy",
-      ],
-      datasets: [
-        {
-          label: "# of Votes",
-          data: objetFromFetch,
-          backgroundColor: "rgba(255, 99, 132, 0.2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 10,
-        },
-      ],
-    };
-  }
+  let data = {};
+  // if (dataFetch) {
+  //   dataFetch.map((item) => objetFromFetch.push(item));
+  //   dataOBJ = {
+  //     labels: [
+  //       "Admiration",
+  //       "Anxiety",
+  //       "Boredom",
+  //       "Calmness",
+  //       "Confusion",
+  //       "Dussapointment",
+  //       "Doubt",
+  //       "Excitement",
+  //       "Interest",
+  //       "Joy",
+  //     ],
+  //     datasets: [
+  //       {
+  //         label: "# of Votes",
+  //         data: objetFromFetch,
+  //         backgroundColor: "rgba(255, 99, 132, 0.2)",
+  //         borderColor: "rgba(255, 99, 132, 1)",
+  //         borderWidth: 10,
+  //       },
+  //     ],
+  //   };
+  // }
 
   const processEmotionSums = (grouped_transcription) => {
     const emotionSums = {};
@@ -268,7 +268,7 @@ function App() {
                   </article>
                 </div>
                 <div>
-                  <Radar data={dataOBJ} />
+                  <Radar data={data} />
                 </div>
               </div>
             )}

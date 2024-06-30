@@ -49,8 +49,9 @@ async def process_video(file: UploadFile = File(...)):
 
 
 @app.post("/process_audio")
-async def process_audio(file: UploadFile = File(...)):
-    audio_path = save_file(file, f"uploads/{file.filename}")
+async def process_audio(video_file: UploadFile = File(...),
+                        text_str: UploadFile = str):
+    audio_path = save_file(video_file, f"uploads/{video_file.filename}")
 
     try:
         job_id = start_inference_job(audio_path)
