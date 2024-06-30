@@ -74,3 +74,13 @@ class TranscriptEvaluationRequest(BaseModel):
 
 class TranscriptEvaluationResponse(BaseModel):
     feedback: str
+
+
+# response
+
+
+class ProcessedRespone(BaseModel):
+    original_text: str
+    transcript: str
+    emotions: str
+    evaluatoin: str

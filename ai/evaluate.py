@@ -113,11 +113,13 @@ def evaluate(transcript, ground_truth):
     prompt = create_prompt(transcript, ground_truth)
     client = openai.OpenAI()
 
+    print(prompt)
+
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": create_system_prompt()},
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": f"{prompt}"},
         ],
     )
 

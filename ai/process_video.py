@@ -10,12 +10,12 @@ def extract_audio(video_path: str, audio_path: str) -> None:
     audio.write_audiofile(audio_path)
 
 
-def extract_frames(video_path: str, output_folder: str, frame_interval: int) -> None:
+def extract_frames(video_path: str, output_folder: str, time_interval: int) -> None:
     video = mp.VideoFileClip(video_path)
     os.makedirs(output_folder, exist_ok=True)
 
-    frame_count = int(video.fps * video.duration)
-    for i in range(0, frame_count, frame_interval):
-        frame = video.get_frame(i / video.fps)
-        frame_path = os.path.join(output_folder, f"frame_{i}.png")
+    total_duration = int(video.duration)
+    for t in range(0, total_duration, time_interval):
+        frame = video.get_frame(t)
+        frame_path = os.path.join(output_folder, f"frame_{t}.png")
         mp.ImageClip(frame).save_frame(frame_path)
