@@ -194,11 +194,14 @@ function App() {
                   </article>
                 </div>
                 <div>
-                  <Radar data={dataOBJ} />
+                  <Radar data={data} />
                 </div>
               </div>
             )}
           </section>
+          <div>
+            <p>{dataFetch.evaluation}</p>
+          </div>
         </div>
       </main>
     </>
