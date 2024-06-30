@@ -25,6 +25,7 @@ function App() {
   const [form, setForm] = useState({ video: "", text: "" });
   const [dataFetch, setDatafetch] = useState();
   const [uploaded, setUploaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [text, setText] = useState({
     userText: null,
     llmText: null
@@ -47,26 +48,28 @@ function App() {
     formData.append("video", form.video);
     formData.append("text", form.text);
     console.log(formData);
+    setLoading(true)
     fetch("/uploadVideo", {
       method: "POST",
       body: formData,
     })
-    .then(async (result) =>{     
-      const data = await result.json();
-      //setDatafetch(data.grouped_transcription[2].emotions_sumary)
-      console.log(data.grouped_transcription)
-      // setDatafetch(data.grouped_transcription);
-      setUploaded(true);
-      setText({ userText: data.original_text, llmText: data.transcription });
-      setDatafetch(data.grouped_transcription);
-      // if (data && data.grouped_transcription) {
-      // } else {
-      //   console.error('Invalid data structure:', data);
-      // }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+      .then(async (result) => {
+        // const data = await result.json();
+        // //setDatafetch(data.grouped_transcription[2].emotions_sumary)
+        // console.log(data.grouped_transcription)
+        // // setDatafetch(data.grouped_transcription);
+        // setUploaded(true);
+        // setText({ userText: data.original_text, llmText: data.transcription });
+        // setDatafetch(data.grouped_transcription);
+        // // if (data && data.grouped_transcription) {
+        // } else {
+        //   console.error('Invalid data structure:', data);
+        // }
+        setLoading(false)
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
   const processEmotionSums = (groupedTranscription) => {
     const emotions = [
@@ -78,7 +81,7 @@ function App() {
       emotion,
       sum: 0
     }));
-    
+
     groupedTranscription.forEach(([, , emotionData]) => {
       emotions.forEach((emotion, idx) => {
         emotionSums[idx].sum += emotionData[emotion] || 0;
@@ -136,37 +139,45 @@ function App() {
                 // encType="multipart/form-data"
                 className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
               >
-              <div className="mb-4 grid grid-cols-1 px-40 content-around">
-                <h1 className="text-2xl m-5">
-                  Upload your video presentation
-                </h1>
-                <div className="flex flex-col justify-between items-center">
-                  <input
-                    type="file"
-                    name="video"
-                    id="video"
-                    onChange={handleChange}
-                    className="m-5"
-                  />
-                  <h1 className="text-2xl mt-5">Write your pro text</h1>
-                  <textarea
-                    // type="textarea"
-                    name="text"
-                    id="text"
-                    value="Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, quam sequi! Tempora atque, delectus officia totam deserunt accusantium, vero voluptates obcaecati quibusdam consequuntur debitis quas hic eaque unde libero esse rem reprehenderit fuga aspernatur ullam illum et, porro necessitatibus? Saepe suscipit tempore, placeat ipsa error accusantium quod consequatur blanditiis eum!"
-                    onChange={handleChange}
-                    className="w-[500px] y-[100px] my-5"
-                  />
-                </div>
-                <button
-                  className="bg-blue-500 w-[500px] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={handleSubmit}
-                >
-                  send
-                </button>
+                <div className="mb-4 grid grid-cols-1 px-40 content-around">
+                  <h1 className="text-2xl m-5">
+                    Upload your video presentation
+                  </h1>
+                  <div className="flex flex-col justify-between items-center">
+                    <input
+                      type="file"
+                      name="video"
+                      id="video"
+                      onChange={handleChange}
+                      className="m-5"
+                    />
+                    <h1 className="text-2xl mt-5">Write your pro text</h1>
+                    <textarea
+                      // type="textarea"
+                      name="text"
+                      id="text"
+                      value="Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, quam sequi! Tempora atque, delectus officia totam deserunt accusantium, vero voluptates obcaecati quibusdam consequuntur debitis quas hic eaque unde libero esse rem reprehenderit fuga aspernatur ullam illum et, porro necessitatibus? Saepe suscipit tempore, placeat ipsa error accusantium quod consequatur blanditiis eum!"
+                      onChange={handleChange}
+                      className="p-5 w-full text-slate-600 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded px-3.5 py-2.5 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                    //className="w-[500px] y-[100px]  my-5 resize overflow scroll rounded no-scrollbar "
+                    />
+                  </div>
+                  <button
+                    className="bg-blue-500 w-[500px] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleSubmit}
+                  >
+                    send
+                  </button>
                 </div>
               </form>
             )}
+            {loading && (<div
+              className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+              role="status">
+              <span
+                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+              >Loading...</span>
+            </div>)}
             {uploaded && (
               <div>
                 <div className="flex justify-center">
@@ -184,7 +195,7 @@ function App() {
                       <span className="text-red-500">LLM trancript</span>
                     </h5>
                     <p className="font-normal text-justify py-3 text-gray-700 dark:text-gray-400">
-                     {text.llmText}
+                      {text.llmText}
                     </p>
                   </article>
                 </div>
