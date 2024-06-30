@@ -6,6 +6,7 @@ import os
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
+import numpy as np
 import requests
 from dotenv import load_dotenv
 
@@ -26,7 +27,7 @@ def fetch_job_predictions(job_id: str, api_key: str) -> str:
     return response.text
 
 
-def parse_response(response_json: str):
+def parse_response(response_json: str) -> List[HumePredictionResponse]:
     response_dict = json.loads(response_json)
     return [HumePredictionResponse(**prediction) for prediction in response_dict]
 
@@ -56,7 +57,8 @@ def group_transcription_by_time(
                     start_time = prediction.time.begin
                     interval_start = int(start_time // interval) * interval
                     emotions = {
-                        emotion.name: emotion.score for emotion in prediction.emotions
+                        emotion.name: round(emotion.score, 2)
+                        for emotion in prediction.emotions
                     }
                     transcript_aggregation[interval_start].append(
                         (prediction.text, emotions)
@@ -76,7 +78,9 @@ def aggregate_emotions(
         max_score = max(aggregated_emotions.values(), default=1)
         if max_score > 0:
             for emotion in aggregated_emotions:
-                aggregated_emotions[emotion] /= max_score
+                aggregated_emotions[emotion] = round(
+                    aggregated_emotions[emotion] / max_score, 2
+                )
         emotion_aggregation[interval_start] = dict(aggregated_emotions)
     return emotion_aggregation
 
@@ -108,7 +112,8 @@ def calculate_average_emotions(
 
     max_avg_emotion = max(average_emotions.values(), default=1)
     normalized_emotions = {
-        emotion: score / max_avg_emotion for emotion, score in average_emotions.items()
+        emotion: round(score / max_avg_emotion, 2)
+        for emotion, score in average_emotions.items()
     }
 
     return normalized_emotions
