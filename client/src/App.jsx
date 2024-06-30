@@ -30,12 +30,6 @@ function App() {
     llmText: null
   })
 
-  useEffect(() => {
-    
-    if (dataExample && dataExample.grouped_transcription) {
-      setDatafetch(dataExample.grouped_transcription);
-    }
-  }, []);
 
 
   const handleChange = (e) => {
@@ -58,12 +52,13 @@ function App() {
       body: formData,
     })
     .then(async (result) =>{     
-      //const data = await result.json();
-      console.log(dataExample)
-      setDatafetch(dataExample.grouped_transcription);
+      const data = await result.json();
+      //setDatafetch(data.grouped_transcription[2].emotions_sumary)
+      console.log(data.grouped_transcription)
+      // setDatafetch(data.grouped_transcription);
       setUploaded(true);
-      setText(data.llmText)
-      setText(data.userText)
+      setText({ userText: data.original_text, llmText: data.transcription });
+      setDatafetch(data.grouped_transcription);
       // if (data && data.grouped_transcription) {
       // } else {
       //   console.error('Invalid data structure:', data);
@@ -194,13 +189,13 @@ function App() {
                   </article>
                 </div>
                 <div>
-                  <Radar data={data} />
+                  <Radar data={dataOBJ} />
                 </div>
               </div>
             )}
           </section>
           <div>
-            <p>{dataFetch.evaluation}</p>
+            <p>//dataFetch.evaluation</p>
           </div>
         </div>
       </main>
