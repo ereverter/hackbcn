@@ -21,7 +21,6 @@ def upload_files(video_file, text_file):
 
 
 def plot_emotions_summary(emotions_summary):
-    st.subheader("Emotions Summary")
     if emotions_summary:
         df = pd.DataFrame(emotions_summary.items(), columns=["Emotion", "Score"])
         df.set_index("Emotion", inplace=True)
@@ -59,7 +58,6 @@ def plot_emotions_over_time(grouped_transcription):
 
     df_emotions = pd.DataFrame(emotions, index=time_stamps)
 
-    st.subheader("Emotions Over Time")
     fig = px.line(
         df_emotions,
         title="Evolution of Emotions Over Time",
@@ -91,7 +89,7 @@ def main():
             st.subheader("Transcript")
             st.text_area("", result.get("transcription", ""), height=300, key="tt")
 
-        st.subheader("Emotions Summary")
+        st.subheader("Conveyed emotions")
         emotions_summary = result.get("emotions_summary", {})
         if emotions_summary:
             plot_emotions_summary(emotions_summary)

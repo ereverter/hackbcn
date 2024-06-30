@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 from typing import Any, Dict, List
 
@@ -36,7 +37,8 @@ def create_prompt(
     - Specific timestamps where improvements can be made.
     - Parts of the speech where deviations from the original plan occurred.
     - General comments on the delivery and emotion.
-    - Provide a valid JSON
+    - Always comment on the body language.
+    - PROVIDE VALID JSON!
     """
     return prompt
 
@@ -53,7 +55,7 @@ def create_system_prompt() -> str:
 
     3. NO YAPPING
 
-    Your feedback should be organized in a clear and understandable manner. Make it brief and concise. The final response should be a JSON object containing two main keys:
+    Your feedback should be organized in a clear and understandable manner. The final response should be a JSON object containing two main keys:
     - "errors": A list of strings, each pointing out a specific error or area for improvement.
     - "recommendations": A list of strings, each offering a constructive suggestion to enhance the presentation.
 
@@ -131,6 +133,7 @@ def evaluate(transcript, ground_truth, body_language_activated=True):
             {"role": "system", "content": create_system_prompt()},
             {"role": "user", "content": f"{prompt}"},
         ],
+        response_format={"type": "json_object"},
     )
 
     feedback = response.choices[0].message.content
