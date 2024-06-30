@@ -66,7 +66,6 @@ async def process_audio(file: UploadFile = File(...)):
 
 @app.get("/fetch_predictions/{job_id}/{agg_time}")
 async def fetch_predictions(job_id: str, agg_time: float):
-    print(os.getenv("HUMEAI_APIKEY"))
     try:
         response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
         api_response = parse_response(response_json)

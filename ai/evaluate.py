@@ -1,3 +1,4 @@
+import base64
 import os
 from typing import Any, Dict, List
 
@@ -59,3 +60,67 @@ def create_system_prompt() -> str:
         ]
     }
     """
+
+
+def create_body_language_prompt():
+    return """
+    You are an expert in public speeches and what body language conveys. Look at the image, and briefly specify whether the body language seems okay or not. For instance, if the person presenting has its hands in the pockets, you should point that out.
+    """
+
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+
+def get_body_language_evaluation(frames_path: str, interval: int):
+    client = openai.OpenAI()
+    body_language = {}
+    frame_files = sorted(
+        [f for f in os.listdir(frames_path) if f.endswith(("png", "jpg", "jpeg"))]
+    )
+    for i, frame in enumerate(frame_files):
+        timestamp = i * interval
+        base64_image = encode_image(frame)
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": create_body_language_prompt()},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Briefly comment on the body language of the person giving the presentation. One liner.",
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}"
+                            },
+                        },
+                    ],
+                },
+            ],
+        )
+
+        body_language[timestamp] = response.choices[0].message.content
+
+    return body_language
+
+
+def evaluate(transcript, ground_truth):
+    prompt = create_prompt(transcript, ground_truth)
+    client = openai.OpenAI()
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": create_system_prompt()},
+            {"role": "user", "content": prompt},
+        ],
+    )
+
+    print(response)
+    feedback = response.choices[0].message.content
+    return feedback

@@ -26,7 +26,7 @@ def fetch_job_predictions(job_id: str, api_key: str) -> str:
     return response.text
 
 
-def parse_response(response_json: str):
+def parse_response(response_json: str) -> List[HumePredictionResponse]:
     response_dict = json.loads(response_json)
     return [HumePredictionResponse(**prediction) for prediction in response_dict]
 
