@@ -63,29 +63,15 @@ function App() {
         // setDatafetch(data.grouped_transcription);
         setUploaded(true);
         setText({ userText: data.original_text, llmText: data.transcription });
-        setDatafetch(data.grouped_transcription);
-        // if (data && data.grouped_transcription) {
-        // } else {
-        //   console.error('Invalid data structure:', data);
-        // }
+        setDatafetch(data.emotions_summary);
+
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error:", error);
-        // const data = await result.json();
-        // //setDatafetch(data.grouped_transcription[2].emotions_sumary)
-        // console.log(data.grouped_transcription)
-        // // setDatafetch(data.grouped_transcription);
-        // setUploaded(true);
-        // setText({ userText: data.original_text, llmText: data.transcription });
-        // setDatafetch(data.grouped_transcription);
-        // // if (data && data.grouped_transcription) {
-        // } else {
-        //   console.error('Invalid data structure:', data);
-        // }
       });
   };
-  const processEmotionSums = (groupedTranscription) => {
+  const processEmotionSums = (emotions_summary) => {
     const emotions = [
       "Admiration",
       "Anxiety",
@@ -100,14 +86,8 @@ function App() {
     ];
     let emotionSums = emotions.map((emotion) => ({
       emotion,
-      sum: 0,
+      sum: emotions_summary[emotion] || 0,
     }));
-
-    groupedTranscription.forEach(([, , emotionData]) => {
-      emotions.forEach((emotion, idx) => {
-        emotionSums[idx].sum += emotionData[emotion] || 0;
-      });
-    });
 
     return emotionSums.map(({ sum }) => sum);
   };
@@ -157,7 +137,7 @@ function App() {
         <div className="text-center my-8">
           <h1 className="text-8xl font-bold text-gray-900">Pitch AI</h1>
           <h2 className="text-2xl font-light text-gray-600 mt-4">
-            Rehearse with Multimodal-base Feedback
+            Rehearse with Multimodal-based Feedback
           </h2>
           <section className="w-full m-10 ">
             {!uploaded && (
@@ -192,7 +172,7 @@ function App() {
                   className="bg-blue-500 w-[500px] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                   onClick={handleSubmit}
                 >
-                  send
+                  Send
                 </button>
                 {/* </div> */}
               </form>
@@ -220,7 +200,7 @@ function App() {
                   </article>
                   <article className="max-w-sm m-5">
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      <span className="text-red-500">Trancript</span>
+                      <span className="text-red-500">Transcript</span>
                     </h5>
                     <p className="font-normal text-justify py-3 text-gray-700 dark:text-gray-400">
                       {text.llmText}
@@ -234,7 +214,7 @@ function App() {
             )}
           </section>
           {evaluation != undefined && (
-            <h1 className="text-5xl font-bold">Feed Back</h1>
+            <h1 className="text-5xl font-bold">Feedback</h1>
           )}
           <div className="flex justify-center text-left">
             {evaluation != undefined && (
