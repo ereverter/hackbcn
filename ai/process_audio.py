@@ -11,7 +11,7 @@ HUMEAI_APIKEY = os.getenv("HUMEAI_APIKEY")
 HUMEAI_BATCH_JOB_ENDPOINT = os.getenv("HUMEAI_BATCH_JOB_ENDPOINT")
 
 
-def start_inference_job(file_path):
+def start_inference_job(file_path: str) -> str:
     with open(file_path, "rb") as f:
         files = {"file": f}
         data = {

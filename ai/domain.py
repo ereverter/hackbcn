@@ -2,38 +2,6 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
-
-class VideoInput(BaseModel):
-    video: str
-
-
-class AudioInput(BaseModel):
-    audio: str
-
-
-class AudioTranscript(BaseModel):
-    transcript: List[str]
-    timestamps: List[str]
-    emotions: List[str]
-
-
-class VideoFrames(BaseModel):
-    frames: List[str]
-
-
-class FramesBodyLangyage(BaseModel):
-    frames: List[str]
-    body_language: List[str]
-
-
-class GroundTranscript(BaseModel):
-    transcript: str
-
-
-class PresentationEvaluation(BaseModel):
-    evaluation: str
-
-
 # hume
 
 
@@ -106,3 +74,13 @@ class TranscriptEvaluationRequest(BaseModel):
 
 class TranscriptEvaluationResponse(BaseModel):
     feedback: str
+
+
+# response
+
+
+class ProcessedRespone(BaseModel):
+    original_text: str
+    transcript: str
+    emotions: str
+    evaluatoin: str
