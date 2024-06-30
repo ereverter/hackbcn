@@ -4,7 +4,7 @@ import time
 
 import requests
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile, Form
 
 from .config import ANALYSIS_INTERVAL_SECONDS, NEGATIVE_EMOTIONS, POSITIVE_EMOTIONS
 from .domain import TranscriptEvaluationRequest, TranscriptEvaluationResponse
@@ -36,7 +36,7 @@ def save_file(file: UploadFile, destination: str):
 
 @app.post("/process_video")
 async def process_video(
-    video_file: UploadFile = File(...), text_file: UploadFile = File(...)
+    video_file: UploadFile = File(...)
 ):
     temp_dir = "temp"
     os.makedirs(temp_dir, exist_ok=True)
@@ -45,7 +45,7 @@ async def process_video(
     audio_path = os.path.join(
         temp_dir, f"{os.path.splitext(video_file.filename)[0]}.wav"
     )
-    text_path = os.path.join(temp_dir, text_file.filename)
+    # text_path = os.path.join(temp_dir, text_str.filename)
 
     try:
         # # Save the video and text files
