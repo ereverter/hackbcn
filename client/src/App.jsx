@@ -146,7 +146,7 @@ function App() {
         <div className="flex flex-wrap items-center gap-5 w-full">
           <a href="#">
             <img
-              src="src/img/NervousFree-removebg-preview.png"
+              src="src/img/Pitch-removebg-preview.png"
               alt="logo"
               className="w-36"
             />
@@ -179,11 +179,10 @@ function App() {
                   />
                   <h1 className="text-2xl mt-5">Write your reference speech</h1>
                   <textarea
-                    // type="textarea"
                     name="text"
                     id="text"
                     style={{ height: "100px" }}
-                    // value="Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, quam sequi! Tempora atque, delectus officia totam deserunt accusantium, vero voluptates obcaecati quibusdam consequuntur debitis quas hic eaque unde libero esse rem reprehenderit fuga aspernatur ullam illum et, porro necessitatibus? Saepe suscipit tempore, placeat ipsa error accusantium quod consequatur blanditiis eum!"
+                    placeholder="Write your speech "
                     onChange={handleChange}
                     className="w-[500px] y-[100px] my-5 p-2"
                     prefix="Your speech"
