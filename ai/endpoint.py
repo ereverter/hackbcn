@@ -90,9 +90,9 @@ async def process_video(
 
         # print("Everything is aggregated")
 
-        # # Read the original text for evaluation
-        # # with open(text_path, "r") as file:
-        # #     original_text = file.read()
+        # Read the original text for evaluation
+        # with open(text_path, "r") as file:
+        #     original_text = file.read()
 
         # feedback = evaluate(grouped_transcription, text)
 

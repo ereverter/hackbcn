@@ -26,6 +26,7 @@ function App() {
   const [dataFetch, setDatafetch] = useState();
   const [evaluation, setEvaluation] = useState();
   const [uploaded, setUploaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [text, setText] = useState({
     userText: null,
     llmText: null,
@@ -46,6 +47,7 @@ function App() {
     formData.append("video", form.video);
     formData.append("text", form.text);
     console.log(formData);
+    setLoading(true);
     fetch("/uploadVideo", {
       method: "POST",
       body: formData,
@@ -66,9 +68,21 @@ function App() {
         // } else {
         //   console.error('Invalid data structure:', data);
         // }
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error:", error);
+        // const data = await result.json();
+        // //setDatafetch(data.grouped_transcription[2].emotions_sumary)
+        // console.log(data.grouped_transcription)
+        // // setDatafetch(data.grouped_transcription);
+        // setUploaded(true);
+        // setText({ userText: data.original_text, llmText: data.transcription });
+        // setDatafetch(data.grouped_transcription);
+        // // if (data && data.grouped_transcription) {
+        // } else {
+        //   console.error('Invalid data structure:', data);
+        // }
       });
   };
   const processEmotionSums = (groupedTranscription) => {
@@ -183,6 +197,16 @@ function App() {
                 </button>
                 {/* </div> */}
               </form>
+            )}
+            {loading && (
+              <div
+                className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+              >
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                  Loading...
+                </span>
+              </div>
             )}
             {uploaded && (
               <div>
