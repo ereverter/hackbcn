@@ -36,7 +36,7 @@ router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
     fs.createReadStream(file.path),
     file.originalname
   );
-  // formData.append("text", text);
+  formData.append("text", text);
   try {
     const responseVideo = await fetch("http://localhost:8000/process_video", {
       method: "POST",
