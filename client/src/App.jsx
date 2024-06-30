@@ -22,9 +22,13 @@ ChartJS.register(
 );
 
 function App() {
-  const [file, setFile] = useState();
+  const [file, setFile] = useState({});
+  
   const [uploaded, setUploaded] = useState(false)
-  const [emotionSums, setEmotionSums] = useState({});
+  const [emotionSums, setEmotionSums] = useState({
+    video: null,
+    text: null,
+  });
   const [data, setData] = useState({
     labels: [],
     datasets: [
@@ -64,60 +68,47 @@ function App() {
       ],
     });
   };
-  // useEffect(() => {
-  //   const emotionSums = {};
-
-  //   dataExample.grouped_transcription.forEach(([time, text, emotions]) => {
-  //     for (const [emotion, value] of Object.entries(emotions)) {
-  //       if (!emotionSums[emotion]) {
-  //         emotionSums[emotion] = 0;
-  //       }
-  //       emotionSums[emotion] += value;
-  //     }
-  //     console.log(emotionSums)
-  //   });
-
-  //   console.log('Suma de las emociones:', emotionSums);
-  // }, [dataExample]);
-  // const data = {
-  //   labels: ['Admiration', 'Anxiety', 'Boredom', 'Calmness', 'Confusion', 'Disappointment', 'Doubt', 'Excitement', 'Interest', 'Joy'],
-
-  //   datasets: [
-  //     {
-  //       label: '# of Votes',
-  //       data: [2, 9, 3, 5, 2, 3],
-  //       backgroundColor: 'rgba(255, 99, 132, 0.2)',
-  //       borderColor: 'rgba(255, 99, 132, 1)',
-  //       borderWidth: 1,
-  //     },
-  //   ],
-  // };
+  
   const handleChange = (e) => {
-    setFile(e.target.files[0]);
+    const { name, files } = e.target;
+    if (files.length > 0) {
+      setFile((prevFiles) => ({
+        ...prevFiles,
+        [name]: files[0],
+      }));
+      console.log(file)
+    }
+    console.log(file)
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("video", file);
+    formData.append("dataObj", file);
     console.log(formData);
     fetch("/uploadVideo", {
       method: "POST",
       body: formData,
     })
-    .then((result) => console.log(result))
-    .finally(() => {
+    .then(async (result) =>{     
+      //const data = await result.json();
+      console.log(dataExample)
+      if (dataExample && dataExample.grouped_transcription) {
+
+      processEmotionSums(dataExample.grouped_transcription);
       setUploaded(true)
-      processEmotionSums(data.grouped_transcription);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+    } else {
+      console.error('Invalid data structure:', dataExample);
+    }
+  })
+  // .catch(error => {
+  //     console.error('Error:', error);
+  //   });
   };
 
   return (
     <>
-      <header class="flex border-b py-4 px-4 sm:px-10 bg-white font-[sans-serif] min-h-[70px] tracking-wide relative z-50">
+      <header className="flex border-b py-4 px-4 sm:px-10 bg-white font-[sans-serif] min-h-[70px] tracking-wide relative z-50">
         <div className="flex flex-wrap items-center gap-5 w-full">
           <a href="#">
             <img
@@ -128,20 +119,22 @@ function App() {
           </a>
         </div>
       </header>
-      <main className="container bg-slate-50">
+      <main className="container bg-slate-200 w-full p-20 content-center">
         <div className="text-center my-8">
-          <h1 className="text-4xl font-bold text-gray-900">NervousFree</h1>
+          <h1 className="text-8xl font-bold text-gray-900">NervousFree</h1>
           <h2 className="text-2xl font-light text-gray-600 mt-4">
             You can get all you want
           </h2>
-          <section className="m-20">
+          <section className="w-full m-10 ">
             {!uploaded && (
               <form
                 // action="http://localhost:4000/api/uploadVideo"
                 method="post"
                 // encType="multipart/form-data"
+                className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
               >
-                <h1 className="text-2xl m-10">
+              <div className="mb-4 grid grid-cols-1 px-40 content-around">
+                <h1 className="text-2xl m-5">
                   Upload your video presentation
                 </h1>
                 <input
@@ -149,6 +142,18 @@ function App() {
                   name="video"
                   id="video"
                   onChange={handleChange}
+                  className=" m-5 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  
+                />
+                 <h1 className="text-2xl m-5">
+                  Upload your speech text
+                </h1>
+                <input
+                  type="file"
+                  name="text"
+                  id="text"
+                  onChange={handleChange}
+                  className="m-5 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -156,6 +161,7 @@ function App() {
                 >
                   send
                 </button>
+                </div>
               </form>
             )}
             {uploaded && (
@@ -166,7 +172,7 @@ function App() {
                       <span className="text-blue-400">Your</span> video
                       transcript
                     </h5>
-                    <p className="font-normal py-3 text-gray-700 dark:text-gray-400">
+                    <p className="font-normal text-justify py-3 text-gray-700 dark:text-gray-400">
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       At qui nemo consequatur totam provident voluptatem soluta
                       labore deleniti dolor pariatur eaque maiores dolorem,
@@ -201,7 +207,7 @@ function App() {
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                       <span className="text-red-500">LLM trancript</span>
                     </h5>
-                    <p className="font-normal py-3 text-gray-700 dark:text-gray-400">
+                    <p className="font-normal text-justify py-3 text-gray-700 dark:text-gray-400">
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Porro, ullam, iure temporibus deleniti et sit iste quas
                       soluta cum eligendi molestiae facere officia sunt
