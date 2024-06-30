@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import dataExample from './exampleJsonData/response.json'
+import dataExample from "./exampleJsonData/response.json";
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -40,7 +40,7 @@ function App() {
         borderWidth: 1,
       },
     ],
-  });
+  };
 
   const processEmotionSums = (grouped_transcription) => {
     const emotionSums = {};
@@ -59,10 +59,10 @@ function App() {
       labels: Object.keys(emotionSums),
       datasets: [
         {
-          label: 'Sum of Emotions',
+          label: "Sum of Emotions",
           data: Object.values(emotionSums),
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
           borderWidth: 1,
         },
       ],
@@ -166,7 +166,7 @@ function App() {
             )}
             {uploaded && (
               <div>
-                <div className="flex">
+                <div className="flex justify-center">
                   <article className="max-w-sm m-3.5">
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                       <span className="text-blue-400">Your</span> video
