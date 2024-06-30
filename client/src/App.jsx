@@ -118,7 +118,7 @@ function App() {
         <div className="flex flex-wrap items-center gap-5 w-full">
           <a href="#">
             <img
-              src="src/img/NervousFree-removebg-preview.png"
+              src="src/img/Pitch-removebg-preview.png"
               alt="logo"
               className="w-36"
             />
