@@ -49,62 +49,62 @@ async def process_video(
     # text_path = os.path.join(temp_dir, text_str.filename)
 
     try:
-        # Save the video and text files
-        save_file(video_file, video_path)
-        # save_file(text_file, text_path)
-        print("Saved files")
+        # # Save the video and text files
+        # save_file(video_file, video_path)
+        # # save_file(text_file, text_path)
+        # print("Saved files")
 
-        # Extract audio and frames from the video
-        extract_audio(video_path, audio_path)
-        print("Extracted audio")
-        extract_frames(video_path, temp_dir, ANALYSIS_INTERVAL_SECONDS)
-        print("Extracted video")
+        # # Extract audio and frames from the video
+        # extract_audio(video_path, audio_path)
+        # print("Extracted audio")
+        # extract_frames(video_path, temp_dir, ANALYSIS_INTERVAL_SECONDS)
+        # print("Extracted video")
 
-        # Start audio processing
-        job_id = start_inference_job(audio_path)
-        print("Job id,", job_id)
+        # # Start audio processing
+        # job_id = start_inference_job(audio_path)
+        # print("Job id,", job_id)
 
-        # Wait until audio processing is over
-        while check_job_status(job_id) != "COMPLETED":
-            time.sleep(2)
-        print("Job id completed")
+        # # Wait until audio processing is over
+        # while check_job_status(job_id) != "COMPLETED":
+        #     time.sleep(2)
+        # print("Job id completed")
 
-        # Fetch and process predictions
-        response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
-        api_response = parse_response(response_json)
-        print("Job has been fetched")
+        # # Fetch and process predictions
+        # response_json = fetch_job_predictions(job_id, os.getenv("HUMEAI_APIKEY"))
+        # api_response = parse_response(response_json)
+        # print("Job has been fetched")
 
-        transcription_text = group_transcription(api_response)
-        grouped_transcription = group_transcription_by_time(
-            api_response, ANALYSIS_INTERVAL_SECONDS
-        )
-        emotions_aggregated = aggregate_emotions(grouped_transcription)
+        # transcription_text = group_transcription(api_response)
+        # grouped_transcription = group_transcription_by_time(
+        #     api_response, ANALYSIS_INTERVAL_SECONDS
+        # )
+        # emotions_aggregated = aggregate_emotions(grouped_transcription)
 
-        detailed_transcription = []
-        for interval_start, texts_emotions in grouped_transcription.items():
-            combined_text = " ".join(text for text, _ in texts_emotions)
-            interval_emotions = emotions_aggregated[interval_start]
-            detailed_transcription.append(
-                (interval_start, combined_text, interval_emotions)
-            )
+        # detailed_transcription = []
+        # for interval_start, texts_emotions in grouped_transcription.items():
+        #     combined_text = " ".join(text for text, _ in texts_emotions)
+        #     interval_emotions = emotions_aggregated[interval_start]
+        #     detailed_transcription.append(
+        #         (interval_start, combined_text, interval_emotions)
+        #     )
 
-        print("Everything is aggregated")
+        # print("Everything is aggregated")
 
         # Read the original text for evaluation
         # with open(text_path, "r") as file:
         #     original_text = file.read()
 
-        feedback = evaluate(grouped_transcription, text)
+        # feedback = evaluate(grouped_transcription, text)
 
-        print("Feedback done")
+        # print("Feedback done")
 
-        return {
-            "original_text": text,
-            "transcription": transcription_text,
-            "grouped_transcription": filter_emotions(detailed_transcription),
-            "emotions_summary": calculate_average_emotions(api_response),
-            "evaluation": feedback,
-        }
+        # return {
+        #     "original_text": text,
+        #     "transcription": transcription_text,
+        #     "grouped_transcription": filter_emotions(detailed_transcription),
+        #     "emotions_summary": calculate_average_emotions(api_response),
+        #     "evaluation": feedback,
+        # }
 
         return {
             "original_text": "### Project Presentation: Mosquito Research - Saving Lives with Pantyhose and Paperclips\n\n---\n\n#### Slide 1: Introduction\n\n- **Title**: Mosquito Research: Saving Lives with Pantyhose and Paperclips\n- **Presenter**: Emily Johnston\n- **Affiliation**: School of Pharmacy and Medical Sciences\n\n---\n\n#### Slide 2: The Global Threat of Mosquitoes\n\n- **Key Point**: The deadliest animal on the planet is not a large predator but the small mosquito.\n- **Statistics**: Mosquitoes transmit diseases like malaria and dengue fever, killing over a million people annually.\n- **Relevance to Australia**: In Australia, the Ross River Virus is the most common mosquito-borne disease.\n\n---\n\n#### Slide 3: Research Motivation\n\n- **Central Question**: Why do certain areas in Australia have higher rates of mosquito-borne diseases?\n- **Objective**: Understand environmental factors that contribute to disease transmission to prevent human infections.\n\n---\n\n#### Slide 4: Innovative Methodology\n\n- **Traditional Challenges**: Testing mosquitoes for viruses has historically been difficult.\n- **New Technique**: Utilized virus-preserving cards coated with honey to attract mosquitoes, allowing for easier detection of viruses.\n- **Field Implementation**: Adapted this technique for broad-scale use, developing new traps and setting them at over 100 field sites across South Australia.\n\n---\n\n#### Slide 5: Fieldwork and Data Collection\n\n- **Traps and Data**: \n  - Over 20,000 mosquitoes captured and tested.\n  - Identified three types of viruses: Ross River, Barmer Forest, and Stratford Virus (new to South Australia).\n- **Environmental Analysis**: Collected data on human housing density, mammal biodiversity, and green space ratios to link virus hotspots.\n\n---\n\n#### Slide 6: Results and Impact\n\n- **Findings**: \n  - The new method is the most sensitive for detecting infected mosquitoes.\n  - Uncovered environmental factors contributing to virus prevalence.\n- **Public Health Applications**: \n  - Interest from health officials in Victoria, Queensland, and Western Australia.\n  - Potential for broader implementation in surveillance programs.\n\n---\n\n#### Slide 7: Cost-Effective Innovation\n\n- **Budget Constraints**: Developed traps using recycled materials like milk cartons, pantyhose, and paperclips.\n- **Cost Efficiency**: Each trap costs less than a dollar and can be reused for an entire season.\n- **Global Relevance**: This low-budget method is particularly important for economically impoverished countries facing high mosquito-borne disease risks.\n\n---\n\n#### Slide 8: Broader Implications\n\n- **Global Health Impact**: \n  - India example: 33 million dengue cases annually, with many living on less than a dollar a day.\n  - The new method can help any country, regardless of resources, to detect and control mosquito populations.\n- **Future Directions**: Expand this method to more regions, refine environmental analyses, and collaborate with global health organizations.\n\n---\n\n#### Slide 9: Conclusion\n\n- **Summary**: \n  - Successfully developed and implemented a cost-effective, sensitive method for mosquito virus detection.\n  - Findings have the potential to transform mosquito surveillance and control worldwide.\n- **Acknowledgments**: Thank you for your attention. Questions are welcome.\n\n---\n\n#### Slide 10: Questions and Discussion\n\n- **Q&A Session**: Open the floor for questions from the audience to discuss methodologies, findings, and future research directions.",
