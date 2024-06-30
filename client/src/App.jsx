@@ -141,9 +141,9 @@ function App() {
       </header>
       <main className="container bg-slate-200 w-full p-20 content-center">
         <div className="text-center my-8">
-          <h1 className="text-8xl font-bold text-gray-900">NervousFree</h1>
+          <h1 className="text-8xl font-bold text-gray-900">Pitch AI</h1>
           <h2 className="text-2xl font-light text-gray-600 mt-4">
-            You can get all you want
+            Rehearse with Multimodal-base Feedback
           </h2>
           <section className="w-full m-10 ">
             {!uploaded && (
@@ -153,35 +153,35 @@ function App() {
                 // encType="multipart/form-data"
                 className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
               >
-                <div className="mb-4 grid grid-cols-1 px-40 content-around">
-                  <h1 className="text-2xl m-5">
-                    Upload your video presentation
-                  </h1>
-                  <div className="flex flex-col justify-between items-center">
-                    <input
-                      type="file"
-                      name="video"
-                      id="video"
-                      onChange={handleChange}
-                      className="m-5"
-                    />
-                    <h1 className="text-2xl mt-5">Write your pro text</h1>
-                    <textarea
-                      // type="textarea"
-                      name="text"
-                      id="text"
-                      value="Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, quam sequi! Tempora atque, delectus officia totam deserunt accusantium, vero voluptates obcaecati quibusdam consequuntur debitis quas hic eaque unde libero esse rem reprehenderit fuga aspernatur ullam illum et, porro necessitatibus? Saepe suscipit tempore, placeat ipsa error accusantium quod consequatur blanditiis eum!"
-                      onChange={handleChange}
-                      className="w-[500px] y-[100px] my-5"
-                    />
-                  </div>
-                  <button
-                    className="bg-blue-500 w-[500px] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={handleSubmit}
-                  >
-                    send
-                  </button>
+                {/* <div className="mb-4 grid grid-cols-1 px-40 content-around"> */}
+                <h1 className="text-2xl m-5">Upload your video presentation</h1>
+                <div className="flex flex-col justify-between items-center">
+                  <input
+                    type="file"
+                    name="video"
+                    id="video"
+                    onChange={handleChange}
+                    className="m-5"
+                  />
+                  <h1 className="text-2xl mt-5">Write your reference speech</h1>
+                  <textarea
+                    // type="textarea"
+                    name="text"
+                    id="text"
+                    style={{ height: "100px" }}
+                    // value="Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, quam sequi! Tempora atque, delectus officia totam deserunt accusantium, vero voluptates obcaecati quibusdam consequuntur debitis quas hic eaque unde libero esse rem reprehenderit fuga aspernatur ullam illum et, porro necessitatibus? Saepe suscipit tempore, placeat ipsa error accusantium quod consequatur blanditiis eum!"
+                    onChange={handleChange}
+                    className="w-[500px] y-[100px] my-5 p-2"
+                    prefix="Your speech"
+                  />
                 </div>
+                <button
+                  className="bg-blue-500 w-[500px] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={handleSubmit}
+                >
+                  send
+                </button>
+                {/* </div> */}
               </form>
             )}
             {uploaded && (
@@ -189,8 +189,7 @@ function App() {
                 <div className="flex justify-center">
                   <article className="max-w-sm m-3.5">
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      <span className="text-blue-400">Your</span> video
-                      transcript
+                      <span className="text-blue-400">Reference</span> text
                     </h5>
                     <p className="font-normal text-justify py-3 text-gray-700 dark:text-gray-400">
                       {text.userText}
@@ -198,19 +197,22 @@ function App() {
                   </article>
                   <article className="max-w-sm m-5">
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      <span className="text-red-500">LLM trancript</span>
+                      <span className="text-red-500">Trancript</span>
                     </h5>
                     <p className="font-normal text-justify py-3 text-gray-700 dark:text-gray-400">
                       {text.llmText}
                     </p>
                   </article>
                 </div>
-                <div>
+                <div className="w-[600px] mx-auto">
                   <Radar data={dataOBJ} />
                 </div>
               </div>
             )}
           </section>
+          {evaluation != undefined && (
+            <h1 className="text-5xl font-bold">Feed Back</h1>
+          )}
           <div className="flex justify-center text-left">
             {evaluation != undefined && (
               <div className="m-8 border p-10 rounded-md bg-red-100">

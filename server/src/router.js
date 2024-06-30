@@ -41,7 +41,7 @@ router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
     const responseVideo = await fetch("http://localhost:8000/process_video", {
       method: "POST",
       body: formData,
-      // headers: formData.getHeaders(),
+      headers: formData.getHeaders(),
     });
     const dataVideo = await responseVideo.json();
     console.log("data from: ", dataVideo);
