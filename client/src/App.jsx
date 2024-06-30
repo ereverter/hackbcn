@@ -22,25 +22,38 @@ ChartJS.register(
 );
 
 function App() {
-  const [file, setFile] = useState({});
-  
-  const [uploaded, setUploaded] = useState(false)
-  const [emotionSums, setEmotionSums] = useState({
-    video: null,
-    text: null,
-  });
-  const [data, setData] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: 'Sum of Emotions',
-        data: [],
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
-      },
-    ],
-  });
+  const [form, setForm] = useState({ video: "", text: "" });
+  const [dataFetch, setDatafetch] = useState();
+  const [uploaded, setUploaded] = useState(false);
+  console.log(dataFetch);
+  const objetFromFetch = [];
+  let dataOBJ = {};
+  if (dataFetch) {
+    dataFetch.map((item) => objetFromFetch.push(item));
+    dataOBJ = {
+      labels: [
+        "Admiration",
+        "Anxiety",
+        "Boredom",
+        "Calmness",
+        "Confusion",
+        "Dussapointment",
+        "Doubt",
+        "Excitement",
+        "Interest",
+        "Joy",
+      ],
+      datasets: [
+        {
+          label: "# of Votes",
+          data: objetFromFetch,
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 10,
+        },
+      ],
+    };
+  }
 
   const processEmotionSums = (grouped_transcription) => {
     const emotionSums = {};
@@ -63,28 +76,27 @@ function App() {
           data: Object.values(emotionSums),
           backgroundColor: "rgba(255, 99, 132, 0.2)",
           borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 1,
+          borderWidth: 10,
         },
       ],
     });
   };
   
   const handleChange = (e) => {
-    const { name, files } = e.target;
-    if (files.length > 0) {
-      setFile((prevFiles) => ({
-        ...prevFiles,
-        [name]: files[0],
-      }));
-      console.log(file)
-    }
-    console.log(file)
+    console.log(e);
+    setForm({
+      ...form,
+      [e.target.name]:
+        e.target.name == "video" ? e.target.files[0] : e.target.value,
+    });
+    console.log(form);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("dataObj", file);
+    formData.append("video", form.video);
+    formData.append("text", form.text);
     console.log(formData);
     fetch("/uploadVideo", {
       method: "POST",
@@ -137,26 +149,26 @@ function App() {
                 <h1 className="text-2xl m-5">
                   Upload your video presentation
                 </h1>
-                <input
-                  type="file"
-                  name="video"
-                  id="video"
-                  onChange={handleChange}
-                  className=" m-5 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  
-                />
-                 <h1 className="text-2xl m-5">
-                  Upload your speech text
-                </h1>
-                <input
-                  type="file"
-                  name="text"
-                  id="text"
-                  onChange={handleChange}
-                  className="m-5 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
+                <div className="flex flex-col justify-between items-center">
+                  <input
+                    type="file"
+                    name="video"
+                    id="video"
+                    onChange={handleChange}
+                    className="m-5"
+                  />
+                  <h1 className="text-2xl mt-5">Write your pro text</h1>
+                  <textarea
+                    // type="textarea"
+                    name="text"
+                    id="text"
+                    value="Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, quam sequi! Tempora atque, delectus officia totam deserunt accusantium, vero voluptates obcaecati quibusdam consequuntur debitis quas hic eaque unde libero esse rem reprehenderit fuga aspernatur ullam illum et, porro necessitatibus? Saepe suscipit tempore, placeat ipsa error accusantium quod consequatur blanditiis eum!"
+                    onChange={handleChange}
+                    className="w-[500px] y-[100px] my-5"
+                  />
+                </div>
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-blue-500 w-[500px] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                   onClick={handleSubmit}
                 >
                   send
@@ -239,7 +251,7 @@ function App() {
                   </article>
                 </div>
                 <div>
-                  <Radar data={data} />
+                  <Radar data={dataOBJ} />
                 </div>
               </div>
             )}

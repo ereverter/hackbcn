@@ -22,6 +22,8 @@ const uploadVideo = multer({ storage: storage });
 // router.post("/uploadVideo", async (req, res) => {
 router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
   console.log("videoData", req.file);
+
+  const text = req.body;
   const file = req.file;
   // const video = req.files.mimetype;
   // const data = req.body.file;
@@ -43,9 +45,9 @@ router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
       `http://localhost:8000/fetch_predictions/${job_id}/${agg_time}`
     );
     const dataTansf = await responsePredict.json();
-    console.log(dataTansf.grouped_transcription);
-    const response = dataTansf.grouped_transcription;
-    res.send({ data: response });
+    console.log(dataTansf.emotions_summary);
+    const response = dataTansf.emotions_summary;
+    res.send(response);
   } catch (err) {
     console.log(err);
   }
@@ -61,11 +63,11 @@ router.post("/uploadVideo", uploadVideo.single("video"), async (req, res) => {
   // const respons4 = await fetch("analizeBodyLL");
   // const dataBody = await response.json();
 
-  res.send({
-    //   video: dataVideo,
-    //   transcrif: dataTansf,
-    //   compare: dataCompare,
-    //   emotion: dataEmotion,
-    //   bodyLL: dataBody,
-  });
+  // res.send({
+  // video: dataVideo,
+  //   transcrif: dataTansf,
+  //   compare: dataCompare,
+  //   emotion: dataEmotion,
+  //   bodyLL: dataBody,
+  // });
 });
