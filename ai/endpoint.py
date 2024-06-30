@@ -4,7 +4,7 @@ import time
 
 import requests
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, HTTPException, UploadFile, Form
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 
 from .config import ANALYSIS_INTERVAL_SECONDS, NEGATIVE_EMOTIONS, POSITIVE_EMOTIONS
 from .domain import TranscriptEvaluationRequest, TranscriptEvaluationResponse
@@ -36,7 +36,8 @@ def save_file(file: UploadFile, destination: str):
 
 @app.post("/process_video")
 async def process_video(
-    video_file: UploadFile = File(...)
+    video_file: UploadFile = File(...),
+    text: str = Form(...),
 ):
     temp_dir = "temp"
     os.makedirs(temp_dir, exist_ok=True)
@@ -50,7 +51,7 @@ async def process_video(
     try:
         # Save the video and text files
         save_file(video_file, video_path)
-        save_file(text_file, text_path)
+        # save_file(text_file, text_path)
         print("Saved files")
 
         # Extract audio and frames from the video
@@ -90,15 +91,15 @@ async def process_video(
         print("Everything is aggregated")
 
         # Read the original text for evaluation
-        with open(text_path, "r") as file:
-            original_text = file.read()
+        # with open(text_path, "r") as file:
+        #     original_text = file.read()
 
-        feedback = evaluate(grouped_transcription, original_text)
+        feedback = evaluate(grouped_transcription, text)
 
         print("Feedback done")
 
         return {
-            "original_text": original_text,
+            "original_text": text,
             "transcription": transcription_text,
             "grouped_transcription": filter_emotions(detailed_transcription),
             "emotions_summary": calculate_average_emotions(api_response),
