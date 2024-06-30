@@ -25,63 +25,19 @@ function App() {
   const [form, setForm] = useState({ video: "", text: "" });
   const [dataFetch, setDatafetch] = useState();
   const [uploaded, setUploaded] = useState(false);
-  console.log(dataFetch);
-  const objetFromFetch = [];
-  let dataOBJ = {};
-  if (dataFetch) {
-    dataFetch.map((item) => objetFromFetch.push(item));
-    dataOBJ = {
-      labels: [
-        "Admiration",
-        "Anxiety",
-        "Boredom",
-        "Calmness",
-        "Confusion",
-        "Dussapointment",
-        "Doubt",
-        "Excitement",
-        "Interest",
-        "Joy",
-      ],
-      datasets: [
-        {
-          label: "# of Votes",
-          data: objetFromFetch,
-          backgroundColor: "rgba(255, 99, 132, 0.2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 10,
-        },
-      ],
-    };
-  }
+  const [text, setText] = useState({
+    userText: null,
+    llmText: null
+  })
 
-  const processEmotionSums = (grouped_transcription) => {
-    const emotionSums = {};
+  useEffect(() => {
+    
+    if (dataExample && dataExample.grouped_transcription) {
+      setDatafetch(dataExample.grouped_transcription);
+    }
+  }, []);
 
-    grouped_transcription.forEach(([time, text, emotions]) => {
-      for (const [emotion, value] of Object.entries(emotions)) {
-        if (!emotionSums[emotion]) {
-          emotionSums[emotion] = 0;
-        }
-        emotionSums[emotion] += value;
-      }
-    });
 
-    setEmotionSums(emotionSums);
-    setData({
-      labels: Object.keys(emotionSums),
-      datasets: [
-        {
-          label: "Sum of Emotions",
-          data: Object.values(emotionSums),
-          backgroundColor: "rgba(255, 99, 132, 0.2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 10,
-        },
-      ],
-    });
-  };
-  
   const handleChange = (e) => {
     console.log(e);
     setForm({
@@ -89,7 +45,6 @@ function App() {
       [e.target.name]:
         e.target.name == "video" ? e.target.files[0] : e.target.value,
     });
-    console.log(form);
   };
 
   const handleSubmit = (e) => {
@@ -105,18 +60,57 @@ function App() {
     .then(async (result) =>{     
       const data = await result.json();
       console.log(data)
-      if (dataExample && dataExample.grouped_transcription) {
-
-      processEmotionSums(dataExample.grouped_transcription);
-      setUploaded(true)
-    } else {
-      console.error('Invalid data structure:', dataExample);
-    }
-  })
-  // .catch(error => {
-  //     console.error('Error:', error);
-  //   });
+      if (data && data.grouped_transcription) {
+        setDatafetch(data.grouped_transcription);
+        setUploaded(true);
+      } else {
+        console.error('Invalid data structure:', data);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   };
+  const processEmotionSums = (groupedTranscription) => {
+    const emotions = [
+      "Admiration", "Anxiety", "Boredom", "Calmness",
+      "Confusion", "Disappointment", "Doubt", "Excitement",
+      "Interest", "Joy"
+    ];
+    let emotionSums = emotions.map(emotion => ({
+      emotion,
+      sum: 0
+    }));
+    
+    groupedTranscription.forEach(([, , emotionData]) => {
+      emotions.forEach((emotion, idx) => {
+        emotionSums[idx].sum += emotionData[emotion] || 0;
+      });
+    });
+
+    return emotionSums.map(({ sum }) => sum);
+  };
+
+  let dataOBJ = {};
+  if (dataFetch) {
+    const emotionSums = processEmotionSums(dataFetch);
+    dataOBJ = {
+      labels: [
+        "Admiration", "Anxiety", "Boredom", "Calmness",
+        "Confusion", "Disappointment", "Doubt", "Excitement",
+        "Interest", "Joy"
+      ],
+      datasets: [
+        {
+          label: "Emotion Scores",
+          data: emotionSums,
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  }
 
   return (
     <>
